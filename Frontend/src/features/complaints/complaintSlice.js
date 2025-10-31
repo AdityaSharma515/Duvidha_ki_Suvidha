@@ -1,17 +1,27 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import API from "../../api/axios.js";
 
-const API_URL = "http://localhost:5001/api/v1/complaints";
+const ENDPOINT = "/complaints";
 
-// ✅ Get all complaints (Admin or User)
+// ✅ Get all complaints (Admin only)
 export const getComplaints = createAsyncThunk(
   "complaint/getAll",
   async (_, { rejectWithValue }) => {
     try {
-      const token = localStorage.getItem("token");
-      const response = await axios.get(API_URL, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await API.get(`${ENDPOINT}/all`);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || "Failed to fetch complaints");
+    }
+  }
+);
+
+// ✅ Get user's complaints
+export const getUserComplaints = createAsyncThunk(
+  "complaint/getUserComplaints",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await API.get(`${ENDPOINT}/user`);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || "Failed to fetch complaints");
@@ -24,12 +34,8 @@ export const createComplaint = createAsyncThunk(
   "complaint/create",
   async (formData, { rejectWithValue }) => {
     try {
-      const token = localStorage.getItem("token");
-      const response = await axios.post(API_URL, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
-        },
+      const response = await API.post(ENDPOINT, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
       return response.data;
     } catch (error) {
@@ -43,12 +49,7 @@ export const updateComplaintStatus = createAsyncThunk(
   "complaint/updateStatus",
   async ({ id, status }, { rejectWithValue }) => {
     try {
-      const token = localStorage.getItem("token");
-      const response = await axios.patch(
-        `${API_URL}/${id}`,
-        { status },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const response = await API.patch(`${ENDPOINT}/${id}`, { status });
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || "Failed to update status");
@@ -61,10 +62,7 @@ export const deleteComplaint = createAsyncThunk(
   "complaint/delete",
   async (id, { rejectWithValue }) => {
     try {
-      const token = localStorage.getItem("token");
-      await axios.delete(`${API_URL}/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await API.delete(`${ENDPOINT}/${id}`);
       return id;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || "Failed to delete complaint");
@@ -83,16 +81,30 @@ const complaintSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      // Get All
+      // Get All (Admin)
       .addCase(getComplaints.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(getComplaints.fulfilled, (state, action) => {
         state.loading = false;
-        state.complaints = action.payload;
+        state.complaints = action.payload.complaints || [];
       })
       .addCase(getComplaints.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      
+      // Get User Complaints
+      .addCase(getUserComplaints.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getUserComplaints.fulfilled, (state, action) => {
+        state.loading = false;
+        state.complaints = action.payload.complaints || [];
+      })
+      .addCase(getUserComplaints.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
@@ -104,7 +116,7 @@ const complaintSlice = createSlice({
       })
       .addCase(createComplaint.fulfilled, (state, action) => {
         state.loading = false;
-        state.complaints.push(action.payload);
+        state.complaints.push(action.payload.complaint);
       })
       .addCase(createComplaint.rejected, (state, action) => {
         state.loading = false;
@@ -113,9 +125,10 @@ const complaintSlice = createSlice({
 
       // Update Status
       .addCase(updateComplaintStatus.fulfilled, (state, action) => {
-        const index = state.complaints.findIndex((c) => c._id === action.payload._id);
+        const updatedComplaint = action.payload.complaint;
+        const index = state.complaints.findIndex((c) => c._id === updatedComplaint._id);
         if (index !== -1) {
-          state.complaints[index] = action.payload;
+          state.complaints[index] = updatedComplaint;
         }
       })
       .addCase(updateComplaintStatus.rejected, (state, action) => {

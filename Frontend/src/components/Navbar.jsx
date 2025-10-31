@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Navbar, Container, Nav, Button } from "react-bootstrap";
 
 const AppNavbar = () => {
-  const { token } = useSelector((state) => state.auth);
+  const { token, user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -29,6 +29,11 @@ const AppNavbar = () => {
                 <Nav.Link as={Link} to="/complaints">
                   My Complaints
                 </Nav.Link>
+                {user?.role === 'maintainer' && (
+                  <Nav.Link as={Link} to="/admin">
+                    Admin Panel
+                  </Nav.Link>
+                )}
                 <Button
                   variant="outline-light"
                   size="sm"

@@ -11,7 +11,7 @@ const complaintSchema = new mongoose.Schema({
   },
   category: {
     type: String,
-    enum: ["Electrical", "Plumbing", "Cleaning", "Other"],
+    enum: ["Electrical", "Repair", "Cleaning", "Other"],
     default: "Other",
   },
   imageUrl: {
@@ -19,7 +19,7 @@ const complaintSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["Pending", "In Progress", "Resolved"],
+    enum: ["Pending", "In Progress", "Resolved", "Rejected"],
     default: "Pending",
   },
   studentId: {

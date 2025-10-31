@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getComplaints, updateComplaintStatus, deleteComplaint } from "../features/complaints/complaintSlice";
+import { toast } from "react-toastify";
 import Loader from "../components/Loader";
 import { Container, Row, Col, Form, Button, Table, Badge } from "react-bootstrap";
 
 const AdminPanel = () => {
   const dispatch = useDispatch();
-  const { complaints, loading, error } = useSelector((state) => state.complaint);
+  const { complaints, loading, error } = useSelector((state) => state.complaints);
   const { user } = useSelector((state) => state.auth);
 
   const [filter, setFilter] = useState("all");
@@ -22,13 +23,23 @@ const AdminPanel = () => {
     return true;
   });
 
-  const handleStatusChange = (id, newStatus) => {
-    dispatch(updateComplaintStatus({ id, status: newStatus }));
+  const handleStatusChange = async (id, newStatus) => {
+    const resultAction = await dispatch(updateComplaintStatus({ id, status: newStatus }));
+    if (updateComplaintStatus.fulfilled.match(resultAction)) {
+      toast.success(`Complaint status updated to ${newStatus}`);
+    } else {
+      toast.error('Failed to update complaint status');
+    }
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this complaint?")) {
-      dispatch(deleteComplaint(id));
+      const resultAction = await dispatch(deleteComplaint(id));
+      if (deleteComplaint.fulfilled.match(resultAction)) {
+        toast.success('Complaint deleted successfully');
+      } else {
+        toast.error('Failed to delete complaint');
+      }
     }
   };
 
@@ -55,9 +66,9 @@ const AdminPanel = () => {
         <Col md={3}>
           <Form.Select value={filter} onChange={(e) => setFilter(e.target.value)}>
             <option value="all">All Complaints</option>
-            <option value="pending">Pending</option>
-            <option value="resolved">Resolved</option>
-            <option value="rejected">Rejected</option>
+            <option value="Pending">Pending</option>
+            <option value="Resolved">Resolved</option>
+            <option value="Rejected">Rejected</option>
           </Form.Select>
         </Col>
         <Col md={3}>
@@ -92,13 +103,13 @@ const AdminPanel = () => {
               <tr key={c._id}>
                 <td>{i + 1}</td>
                 <td>{c.title}</td>
-                <td>{c.user?.username || "N/A"}</td>
+                <td>{c.studentId?.username || "N/A"}</td>
                 <td>
                   <Badge
                     bg={
-                      c.status === "resolved"
+                      c.status === "Resolved"
                         ? "success"
-                        : c.status === "rejected"
+                        : c.status === "Rejected"
                         ? "danger"
                         : "warning"
                     }
@@ -109,13 +120,13 @@ const AdminPanel = () => {
                 <td>{new Date(c.createdAt).toLocaleDateString()}</td>
                 <td>{c.description.slice(0, 40)}...</td>
                 <td>
-                  {c.status === "pending" && (
+                  {c.status === "Pending" && (
                     <>
                       <Button
                         size="sm"
                         variant="success"
                         className="me-2"
-                        onClick={() => handleStatusChange(c._id, "resolved")}
+                        onClick={() => handleStatusChange(c._id, "Resolved")}
                       >
                         Resolve
                       </Button>
@@ -123,7 +134,7 @@ const AdminPanel = () => {
                         size="sm"
                         variant="danger"
                         className="me-2"
-                        onClick={() => handleStatusChange(c._id, "rejected")}
+                        onClick={() => handleStatusChange(c._id, "Rejected")}
                       >
                         Reject
                       </Button>

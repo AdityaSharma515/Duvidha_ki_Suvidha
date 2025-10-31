@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { createComplaint } from "../features/complaints/complaintSlice.js";
 
 const ComplaintForm = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { loading, error } = useSelector((state) => state.complaints);
 
   const [formData, setFormData] = useState({
@@ -30,7 +33,15 @@ const ComplaintForm = () => {
     data.append("category", formData.category);
     if (formData.image) data.append("image", formData.image);
 
-    dispatch(createComplaint(data));
+      dispatch(createComplaint(data))
+        .unwrap()
+        .then(() => {
+          toast.success("Complaint registered successfully!");
+          navigate('/dashboard');
+        })
+        .catch(() => {
+          toast.error("Failed to register complaint");
+        });
   };
 
   return (
@@ -71,7 +82,7 @@ const ComplaintForm = () => {
             required
           >
             <option value="">Select Category</option>
-            <option value="Maintenance">Maintenance</option>
+            <option value="Electrical">Electrical</option>
             <option value="Repair">Repair</option>
             <option value="Cleaning">Cleaning</option>
             <option value="Other">Other</option>

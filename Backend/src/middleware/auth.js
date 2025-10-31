@@ -32,3 +32,24 @@ export function auth(req, res, next) {
     return res.status(401).json({ message: "Invalid or expired token" });
   }
 }
+
+// Role-based authorization middleware factory
+export function requireRole(role) {
+  return (req, res, next) => {
+    try {
+      // auth middleware should have populated req.user
+      if (!req.user) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+
+      if (req.user.role !== role) {
+        return res.status(403).json({ message: "Forbidden: insufficient role" });
+      }
+
+      next();
+    } catch (error) {
+      console.error("Error in role authorization:", error);
+      return res.status(500).json({ message: "Server error" });
+    }
+  };
+}

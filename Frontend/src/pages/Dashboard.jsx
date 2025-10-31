@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getComplaints } from "../features/complaints/complaintSlice";
+import { useNavigate, Link } from "react-router-dom";
+import { getUserComplaints } from "../features/complaints/complaintSlice";
 import ComplaintCard from "../components/ComplaintCard";
 import Loader from "../components/Loader";
 import { Container, Row, Col, Form, Button } from "react-bootstrap";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   // ✅ FIXED: Use "state.complaints" (plural)
   const { complaints = [], loading, error } = useSelector(
@@ -14,17 +16,28 @@ const Dashboard = () => {
   );
 
   const { user } = useSelector((state) => state.auth);
+  
+  useEffect(() => {
+    // Redirect maintainers to admin panel
+    if (user?.role === 'maintainer') {
+      navigate('/admin');
+      return;
+    }
+      // Fetch complaints
+      dispatch(getUserComplaints());
+    }, [user, navigate, dispatch]);
 
   const [filter, setFilter] = useState("all");
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    dispatch(getComplaints());
+    dispatch(getUserComplaints());
   }, [dispatch]);
 
   const filteredComplaints = complaints.filter((c) => {
-    if (filter !== "all" && c.status !== filter) return false;
-    if (search && !c.title.toLowerCase().includes(search.toLowerCase())) return false;
+    const status = (c.status || "").toString();
+    if (filter !== "all" && status.toLowerCase() !== filter.toLowerCase()) return false;
+    if (search && !(c.title || "").toLowerCase().includes(search.toLowerCase())) return false;
     return true;
   });
 
@@ -59,10 +72,15 @@ const Dashboard = () => {
           </Form.Select>
         </Col>
         <Col md={3}>
-          <Button variant="primary" onClick={() => dispatch(getComplaints())}>
+          <Button variant="primary" onClick={() => dispatch(getUserComplaints())}>
             Refresh
           </Button>
         </Col>
+          <Col md={2}>
+            <Button variant="success" as={Link} to="/complaint">
+              Raise Complaint
+            </Button>
+          </Col>
       </Row>
 
       {/* 🔹 Complaint List */}
@@ -72,7 +90,7 @@ const Dashboard = () => {
         ) : (
           filteredComplaints.map((complaint) => (
             <Col key={complaint._id} md={6} lg={4} className="mb-4">
-              <ComplaintCard complaint={complaint} />
+              <ComplaintCard complaint={complaint} isAdmin={false} />
             </Col>
           ))
         )}

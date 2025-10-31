@@ -4,7 +4,7 @@ import { deleteComplaint } from "../features/complaints/complaintSlice"; // Adju
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 
-const ComplaintCard = ({ complaint }) => {
+const ComplaintCard = ({ complaint, isAdmin = false }) => {
   const dispatch = useDispatch();
 
   const handleDelete = () => {
@@ -15,12 +15,15 @@ const ComplaintCard = ({ complaint }) => {
 
   return (
     <Card className="shadow-sm my-3">
-      {complaint.image && (
+      {complaint.imageUrl && (
         <Card.Img
           variant="top"
-          src={`http://localhost:5001/${complaint.image}`} // Adjust if using static path
+          src={complaint.imageUrl}
           alt="Complaint"
           style={{ height: "200px", objectFit: "cover" }}
+          onError={(e) => {
+            e.target.style.display = 'none';
+          }}
         />
       )}
 
@@ -49,15 +52,17 @@ const ComplaintCard = ({ complaint }) => {
           </small>
         </div>
 
-        <div className="mt-3 text-end">
-          <Button
-            variant="outline-danger"
-            size="sm"
-            onClick={handleDelete}
-          >
-            <i className="bi bi-trash3"></i> Delete
-          </Button>
-        </div>
+        {isAdmin && (
+          <div className="mt-3 text-end">
+            <Button
+              variant="outline-danger"
+              size="sm"
+              onClick={handleDelete}
+            >
+              <i className="bi bi-trash3"></i> Delete
+            </Button>
+          </div>
+        )}
       </Card.Body>
     </Card>
   );
