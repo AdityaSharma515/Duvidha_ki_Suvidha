@@ -11,7 +11,7 @@ const AppNavbar = () => {
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate("/signin");
+    navigate("/login");
   };
 
   return (
@@ -42,7 +42,7 @@ const AppNavbar = () => {
               <>
                 <Button
                   as={Link}
-                  to="/signin"
+                  to="/login"
                   variant="outline-light"
                   size="sm"
                   className="me-2"
