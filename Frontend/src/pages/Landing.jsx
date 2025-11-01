@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Container, Row, Col, Button } from "react-bootstrap";
 import { 
   FaExclamationTriangle, 
   FaTools, 
@@ -55,9 +54,9 @@ const Landing = () => {
     <div className="landing-page">
       {/* Hero Section */}
       <section className="hero-section">
-        <Container>
-          <Row className="align-items-center min-vh-100">
-            <Col lg={6} className={`hero-content ${isVisible ? 'fade-in-up' : ''}`}>
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col lg:flex-row items-center min-h-screen">
+            <div className={`lg:w-1/2 hero-content ${isVisible ? 'fade-in-up' : ''}`}>
               <div className="hero-badge mb-4">
                 <FaExclamationTriangle className="me-2" />
                 <span>Hostel Complaint Management System</span>
@@ -69,27 +68,23 @@ const Landing = () => {
                 Streamline your hostel complaint management. Students can raise complaints seamlessly, 
                 and authorities can resolve them efficiently.
               </p>
-              <div className="hero-buttons mt-5">
-                <Button 
-                  as={Link} 
-                  to="/signup" 
-                  size="lg" 
-                  className="me-3 hero-btn-primary"
+              <div className="hero-buttons mt-8 flex flex-wrap gap-4">
+                <Link
+                  to="/signup"
+                  className="hero-btn-primary"
                 >
                   Get Started
-                  <FaArrowRight className="ms-2" />
-                </Button>
-                <Button 
-                  as={Link} 
-                  to="/login" 
-                  size="lg"
+                  <FaArrowRight className="ml-2 inline" />
+                </Link>
+                <Link
+                  to="/login"
                   className="hero-btn-outline"
                 >
                   Sign In
-                </Button>
+                </Link>
               </div>
-            </Col>
-            <Col lg={6} className={`hero-visual ${isVisible ? 'fade-in' : ''}`}>
+            </div>
+            <div className={`lg:w-1/2 hero-visual ${isVisible ? 'fade-in' : ''}`}>
               <div className="hero-card">
                 <div className="card-animation">
                   <FaExclamationTriangle className="main-icon" />
@@ -100,21 +95,21 @@ const Landing = () => {
                   </div>
                 </div>
               </div>
-            </Col>
-          </Row>
-        </Container>
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* Features Section */}
-      <section className="features-section py-5">
-        <Container>
-          <div className="text-center mb-5">
+      <section className="features-section py-20">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
             <h2 className="section-title">Why Choose Us?</h2>
             <p className="section-subtitle">Everything you need to manage hostel complaints effectively</p>
           </div>
-          <Row className="g-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {features.map((feature, index) => (
-              <Col md={6} lg={3} key={index}>
+              <div key={index}>
                 <div className={`feature-card ${isVisible ? 'fade-in-up' : ''}`} style={{ animationDelay: `${index * 0.1}s` }}>
                   <div className="feature-icon-wrapper">
                     {feature.icon}
@@ -122,17 +117,17 @@ const Landing = () => {
                   <h4 className="feature-title">{feature.title}</h4>
                   <p className="feature-description">{feature.description}</p>
                 </div>
-              </Col>
+              </div>
             ))}
-          </Row>
-        </Container>
+          </div>
+        </div>
       </section>
 
       {/* Benefits Section */}
-      <section className="benefits-section py-5">
-        <Container>
-          <Row className="align-items-center">
-            <Col lg={6}>
+      <section className="benefits-section py-20">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col lg:flex-row items-center gap-12">
+            <div className="lg:w-1/2">
               <h2 className="section-title mb-4">All the features you need</h2>
               <div className="benefits-list">
                 {benefits.map((benefit, index) => (
@@ -142,19 +137,17 @@ const Landing = () => {
                   </div>
                 ))}
               </div>
-              <div className="mt-4">
-                <Button 
-                  as={Link} 
-                  to="/signup" 
-                  size="lg"
-                  className="github-btn-primary"
+              <div className="mt-6">
+                <Link
+                  to="/signup"
+                  className="github-btn-primary inline-flex items-center"
                 >
                   Start Managing Complaints
-                  <FaArrowRight className="ms-2" />
-                </Button>
+                  <FaArrowRight className="ml-2" />
+                </Link>
               </div>
-            </Col>
-            <Col lg={6}>
+            </div>
+            <div className="lg:w-1/2">
               <div className="benefits-visual">
                 <div className="stats-card">
                   <div className="stat-item">
@@ -173,25 +166,25 @@ const Landing = () => {
                   </div>
                 </div>
               </div>
-            </Col>
-          </Row>
-        </Container>
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* CTA Section */}
-      <section className="cta-section py-5">
-        <Container>
-          <div className="cta-card text-center">
-            <h2 className="cta-title mb-3">Ready to get started?</h2>
-            <p className="cta-subtitle mb-4">
+      <section className="cta-section py-20">
+        <div className="container mx-auto px-4">
+          <div className="cta-card text-center max-w-3xl mx-auto">
+            <h2 className="cta-title mb-4">Ready to get started?</h2>
+            <p className="cta-subtitle mb-8">
               Join hundreds of students and authorities using Duvidha Ki Suvidha to manage complaints efficiently.
             </p>
-            <Button as={Link} to="/signup" variant="light" size="lg" className="cta-button">
+            <Link to="/signup" className="cta-button inline-flex items-center">
               Create Your Account
-              <FaArrowRight className="ms-2" />
-            </Button>
+              <FaArrowRight className="ml-2" />
+            </Link>
           </div>
-        </Container>
+        </div>
       </section>
 
       <style>{`
@@ -283,6 +276,7 @@ const Landing = () => {
           background: #238636;
           border: 1px solid #238636;
           color: #ffffff;
+          text-decoration: none;
         }
 
         .hero-btn-primary:hover {
@@ -299,6 +293,9 @@ const Landing = () => {
           background: transparent;
           color: #c9d1d9;
           transition: all 0.2s ease;
+          text-decoration: none;
+          display: inline-flex;
+          align-items: center;
         }
 
         .hero-btn-outline:hover {
@@ -492,6 +489,9 @@ const Landing = () => {
           font-weight: 500;
           padding: 0.75rem 2rem;
           transition: all 0.2s ease;
+          text-decoration: none;
+          display: inline-flex;
+          align-items: center;
         }
 
         .github-btn-primary:hover {
@@ -580,6 +580,7 @@ const Landing = () => {
           border: 1px solid #238636;
           color: #ffffff;
           transition: all 0.2s ease;
+          text-decoration: none;
         }
 
         .cta-button:hover {

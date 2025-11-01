@@ -4,13 +4,12 @@ import { useNavigate, Link } from "react-router-dom";
 import { getUserComplaints } from "../features/complaints/complaintSlice";
 import ComplaintCard from "../components/ComplaintCard";
 import Loader from "../components/Loader";
-import { Container, Row, Col, Form, Button } from "react-bootstrap";
+import { FaHandPointRight } from "react-icons/fa";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // ✅ FIXED: Use "state.complaints" (plural)
   const { complaints = [], loading, error } = useSelector(
     (state) => state.complaints || {}
   );
@@ -18,14 +17,12 @@ const Dashboard = () => {
   const { user } = useSelector((state) => state.auth);
   
   useEffect(() => {
-    // Redirect maintainers to admin panel
     if (user?.role === 'maintainer') {
       navigate('/admin');
       return;
     }
-      // Fetch complaints
-      dispatch(getUserComplaints());
-    }, [user, navigate, dispatch]);
+    dispatch(getUserComplaints());
+  }, [user, navigate, dispatch]);
 
   const [filter, setFilter] = useState("all");
   const [search, setSearch] = useState("");
@@ -42,60 +39,64 @@ const Dashboard = () => {
   });
 
   if (loading) return <Loader />;
-  if (error) return <p className="text-danger text-center mt-5">{error}</p>;
+  if (error) return <p className="text-red-400 text-center mt-12">{error}</p>;
 
   return (
-    <Container className="my-4">
-      <h2 className="text-center mb-4">
-        Welcome, {user?.username || "User"} 👋
+    <div className="container mx-auto my-8 px-4">
+      <h2 className="text-center text-2xl font-semibold mb-8 text-[#f0f6fc] flex items-center justify-center gap-2">
+        Welcome, {user?.username || "User"}
       </h2>
 
-      {/* 🔹 Filters Section */}
-      <Row className="align-items-center mb-4">
-        <Col md={4}>
-          <Form.Control
+      {/* Filters Section */}
+      <div className="flex flex-wrap items-center gap-4 mb-8">
+        <div className="flex-1 min-w-[200px]">
+          <input
             type="text"
             placeholder="Search complaints..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
+            className="w-full px-4 py-2 border border-[#30363d] rounded-md bg-[#0d1117] text-[#c9d1d9] placeholder-[#8b949e] focus:outline-none focus:ring-2 focus:ring-[#58a6ff] focus:border-transparent"
           />
-        </Col>
-        <Col md={3}>
-          <Form.Select
+        </div>
+        <div className="min-w-[150px]">
+          <select
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
+            className="w-full px-4 py-2 border border-[#30363d] rounded-md bg-[#0d1117] text-[#c9d1d9] focus:outline-none focus:ring-2 focus:ring-[#58a6ff] focus:border-transparent"
           >
             <option value="all">All Complaints</option>
             <option value="pending">Pending</option>
             <option value="resolved">Resolved</option>
             <option value="rejected">Rejected</option>
-          </Form.Select>
-        </Col>
-        <Col md={3}>
-          <Button variant="primary" onClick={() => dispatch(getUserComplaints())}>
-            Refresh
-          </Button>
-        </Col>
-          <Col md={2}>
-            <Button variant="success" as={Link} to="/complaint">
-              Raise Complaint
-            </Button>
-          </Col>
-      </Row>
+          </select>
+        </div>
+        <button
+          onClick={() => dispatch(getUserComplaints())}
+          className="px-4 py-2 bg-[#0969da] hover:bg-[#0860ca] text-white font-medium rounded-md transition-colors hover:cursor-pointer"
+        >
+          Refresh
+        </button>
+        <Link
+          to="/complaint"
+          className="px-4 py-2 bg-[#238636] hover:bg-[#2ea043] text-white font-medium rounded-md transition-colors"
+        >
+          Raise Complaint
+        </Link>
+      </div>
 
-      {/* 🔹 Complaint List */}
-      <Row>
+      {/* Complaint List */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredComplaints.length === 0 ? (
-          <p className="text-center mt-5">No complaints found.</p>
+          <div className="col-span-full">
+            <p className="text-center mt-12 text-[#8b949e]">No complaints found.</p>
+          </div>
         ) : (
           filteredComplaints.map((complaint) => (
-            <Col key={complaint._id} md={6} lg={4} className="mb-4">
-              <ComplaintCard complaint={complaint} isAdmin={false} />
-            </Col>
+            <ComplaintCard key={complaint._id} complaint={complaint} isAdmin={false} />
           ))
         )}
-      </Row>
-    </Container>
+      </div>
+    </div>
   );
 };
 

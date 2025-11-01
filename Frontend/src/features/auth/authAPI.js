@@ -2,7 +2,7 @@ import axios from "axios";
 
 const API_BASE_URL = "http://localhost:5001/api/v1/auth";
 
-// ✅ Signup API
+// Signup API
 export const signupApi = async (userData) => {
   try {
     const response = await axios.post(`${API_BASE_URL}/signup`, userData);
@@ -15,7 +15,7 @@ export const signupApi = async (userData) => {
   }
 };
 
-// ✅ Signin API
+// Signin API
 export const signinApi = async (userData) => {
   try {
     const response = await axios.post(`${API_BASE_URL}/signin`, userData);
@@ -30,7 +30,7 @@ export const signinApi = async (userData) => {
   }
 };
 
-// ✅ Logout (frontend-only)
+// Logout (frontend-only)
 export const logoutApi = () => {
   localStorage.removeItem("token");
 };

@@ -1,147 +1,149 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../features/auth/authSlice";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Navbar, Container, Nav, Button } from "react-bootstrap";
+import { Link, useNavigate } from "react-router-dom";
 import { FaExclamationTriangle } from "react-icons/fa";
 
 const AppNavbar = () => {
   const { token, user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const location = useLocation();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const isLandingPage = location.pathname === "/";
   const handleLogout = () => {
     dispatch(logout());
     navigate("/");
   };
 
   return (
-    <Navbar 
-      expand="lg" 
-      className={`custom-navbar ${isLandingPage ? 'navbar-landing' : 'navbar-default'}`}
-      style={{
-        backgroundColor: isLandingPage ? '#161b22' : '#ffffff',
-        backdropFilter: isLandingPage ? 'blur(10px)' : 'none',
-        borderBottom: isLandingPage ? '1px solid #30363d' : '1px solid #e1e4e8',
-        boxShadow: isLandingPage ? 'none' : '0 1px 3px rgba(0,0,0,0.12)',
-        transition: 'all 0.3s ease',
-        position: 'sticky',
-        top: 0,
-        zIndex: 1000
-      }}
-    >
-      <Container>
-        <Navbar.Brand 
-          as={Link} 
-          to="/"
-          className="navbar-brand-custom"
-          style={{
-            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif',
-            fontWeight: 600,
-            fontSize: '1.25rem',
-            color: isLandingPage ? '#f0f6fc' : '#24292f',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            textDecoration: 'none'
-          }}
-        >
-          <FaExclamationTriangle style={{ fontSize: '1.5rem', color: isLandingPage ? '#58a6ff' : '#0969da' }} />
-          <span>Duvidha Ki Suvidha</span>
-        </Navbar.Brand>
-        <Navbar.Toggle 
-          aria-controls="basic-navbar-nav"
-          style={{
-            borderColor: isLandingPage ? '#30363d' : '#d1d9e0',
-            color: isLandingPage ? '#c9d1d9' : '#24292f'
-          }}
-        />
+    <nav className="sticky top-0 z-[1000] transition-all duration-300 bg-[#161b22] border-b border-[#30363d] backdrop-blur-sm">
+      <div className="container mx-auto px-4">
+        <div className="flex items-center justify-between h-16">
+          {/* Brand */}
+          <Link
+            to={token ? "/dashboard" : "/"}
+            className="flex items-center gap-2 text-xl font-semibold text-[#f0f6fc] no-underline"
+            style={{
+              fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif'
+            }}
+          >
+            <FaExclamationTriangle className="text-2xl" style={{ color: '#58a6ff' }} />
+            <span>Duvidha Ki Suvidha</span>
+          </Link>
 
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="ms-auto align-items-center">
+          {/* Desktop Menu */}
+          <div className="hidden lg:flex items-center gap-4">
             {token ? (
               <>
-                <Nav.Link 
-                  as={Link} 
+                <Link 
                   to="/dashboard"
-                  style={{
-                    color: isLandingPage ? '#c9d1d9' : '#24292f',
-                    fontWeight: 500,
-                    marginRight: '0.5rem',
-                    textDecoration: 'none'
-                  }}
+                  className="font-medium text-[#c9d1d9] hover:text-[#f0f6fc] no-underline"
                 >
                   Dashboard
-                </Nav.Link>
+                </Link>
                 {user?.role === 'maintainer' && (
-                  <Nav.Link 
-                    as={Link} 
+                  <Link 
                     to="/admin"
-                    style={{
-                      color: isLandingPage ? '#c9d1d9' : '#24292f',
-                      fontWeight: 500,
-                      marginRight: '0.5rem',
-                      textDecoration: 'none'
-                    }}
+                    className="font-medium text-[#c9d1d9] hover:text-[#f0f6fc] no-underline"
                   >
                     Admin Panel
-                  </Nav.Link>
+                  </Link>
                 )}
-                <Button
-                  variant={isLandingPage ? "outline-secondary" : "outline-secondary"}
-                  size="sm"
-                  className="ms-2"
+                <button
                   onClick={handleLogout}
-                  style={{
-                    fontWeight: 500,
-                    borderRadius: '6px',
-                    padding: '0.5rem 1rem',
-                    borderColor: isLandingPage ? '#30363d' : '#d1d9e0',
-                    color: isLandingPage ? '#c9d1d9' : '#24292f',
-                    backgroundColor: 'transparent'
-                  }}
+                  className="px-4 py-2 text-sm font-medium rounded-md border border-[#30363d] text-[#c9d1d9] bg-transparent hover:bg-[#21262d] hover:text-[#f0f6fc] transition-colors hover:cursor-pointer"
                 >
                   Logout
-                </Button>
+                </button>
               </>
             ) : (
               <>
-                <Nav.Link 
-                  as={Link}
+                <Link 
                   to="/login"
-                  style={{
-                    color: isLandingPage ? '#c9d1d9' : '#24292f',
-                    fontWeight: 500,
-                    marginRight: '1rem',
-                    textDecoration: 'none'
-                  }}
+                  className="font-medium text-[#c9d1d9] hover:text-[#f0f6fc] no-underline"
                 >
                   Login
-                </Nav.Link>
-                <Button
-                  as={Link}
+                </Link>
+                <Link
                   to="/signup"
-                  variant="success"
-                  size="sm"
-                  style={{
-                    borderRadius: '6px',
-                    padding: '0.5rem 1rem',
-                    fontWeight: 500,
-                    backgroundColor: '#238636',
-                    borderColor: '#238636',
-                    color: '#ffffff'
-                  }}
+                  className="px-4 py-2 text-sm font-medium rounded-md bg-[#238636] border border-[#238636] text-white hover:bg-[#2ea043] hover:border-[#2ea043] transition-colors"
                 >
                   Sign Up
-                </Button>
+                </Link>
               </>
             )}
-          </Nav>
-        </Navbar.Collapse>
-      </Container>
-    </Navbar>
+          </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="lg:hidden p-2 rounded-md border border-[#30363d] text-[#c9d1d9]"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              {isMenuOpen ? (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              ) : (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              )}
+            </svg>
+          </button>
+        </div>
+
+        {/* Mobile Menu */}
+        {isMenuOpen && (
+          <div className="lg:hidden py-4 border-t border-[#30363d]">
+            <div className="flex flex-col gap-3">
+              {token ? (
+                <>
+                  <Link 
+                    to="/dashboard"
+                    className="font-medium px-2 py-2 text-[#c9d1d9]"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Dashboard
+                  </Link>
+                  {user?.role === 'maintainer' && (
+                    <Link 
+                      to="/admin"
+                      className="font-medium px-2 py-2 text-[#c9d1d9]"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Admin Panel
+                    </Link>
+                  )}
+                  <button
+                    onClick={() => {
+                      handleLogout();
+                      setIsMenuOpen(false);
+                    }}
+                    className="text-left px-2 py-2 font-medium rounded-md border border-[#30363d] text-[#c9d1d9] bg-transparent hover:bg-[#21262d]"
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link 
+                    to="/login"
+                    className="font-medium px-2 py-2 text-[#c9d1d9]"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    to="/signup"
+                    className="px-2 py-2 text-sm font-medium rounded-md bg-[#238636] border border-[#238636] text-white text-center"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Sign Up
+                  </Link>
+                </>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    </nav>
   );
 };
 

@@ -3,7 +3,7 @@ import API from "../../api/axios.js";
 
 const ENDPOINT = "/complaints";
 
-// ✅ Get all complaints (Admin only)
+// Get all complaints (Admin only)
 export const getComplaints = createAsyncThunk(
   "complaint/getAll",
   async (_, { rejectWithValue }) => {
@@ -16,7 +16,7 @@ export const getComplaints = createAsyncThunk(
   }
 );
 
-// ✅ Get user's complaints
+// Get user's complaints
 export const getUserComplaints = createAsyncThunk(
   "complaint/getUserComplaints",
   async (_, { rejectWithValue }) => {
@@ -29,7 +29,7 @@ export const getUserComplaints = createAsyncThunk(
   }
 );
 
-// ✅ Create new complaint
+// Create new complaint
 export const createComplaint = createAsyncThunk(
   "complaint/create",
   async (formData, { rejectWithValue }) => {
@@ -44,7 +44,7 @@ export const createComplaint = createAsyncThunk(
   }
 );
 
-// ✅ Update complaint status (Admin only)
+// Update complaint status (Admin only)
 export const updateComplaintStatus = createAsyncThunk(
   "complaint/updateStatus",
   async ({ id, status }, { rejectWithValue }) => {
@@ -57,7 +57,7 @@ export const updateComplaintStatus = createAsyncThunk(
   }
 );
 
-// ✅ Delete complaint
+// Delete complaint
 export const deleteComplaint = createAsyncThunk(
   "complaint/delete",
   async (id, { rejectWithValue }) => {
@@ -70,7 +70,7 @@ export const deleteComplaint = createAsyncThunk(
   }
 );
 
-// ✅ Slice
+// Slice
 const complaintSlice = createSlice({
   name: "complaint",
   initialState: {
@@ -125,10 +125,15 @@ const complaintSlice = createSlice({
 
       // Update Status
       .addCase(updateComplaintStatus.fulfilled, (state, action) => {
-        const updatedComplaint = action.payload.complaint;
-        const index = state.complaints.findIndex((c) => c._id === updatedComplaint._id);
-        if (index !== -1) {
-          state.complaints[index] = updatedComplaint;
+        const updatedComplaint = action.payload?.complaint || action.payload;
+        if (updatedComplaint && updatedComplaint._id) {
+          const index = state.complaints.findIndex((c) => c._id === updatedComplaint._id);
+          if (index !== -1) {
+            state.complaints[index] = updatedComplaint;
+          } else {
+            // If not found, add it (shouldn't happen but just in case)
+            state.complaints.unshift(updatedComplaint);
+          }
         }
       })
       .addCase(updateComplaintStatus.rejected, (state, action) => {
@@ -137,7 +142,8 @@ const complaintSlice = createSlice({
 
       // Delete
       .addCase(deleteComplaint.fulfilled, (state, action) => {
-        state.complaints = state.complaints.filter((c) => c._id !== action.payload);
+        const deletedId = action.payload;
+        state.complaints = state.complaints.filter((c) => c._id !== deletedId);
       })
       .addCase(deleteComplaint.rejected, (state, action) => {
         state.error = action.payload;
