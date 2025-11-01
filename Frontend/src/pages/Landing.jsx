@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { 
-  FaExclamationTriangle, 
-  FaTools, 
-  FaCheckCircle, 
+import { useSelector } from "react-redux";
+import {
+  FaExclamationTriangle,
+  FaTools,
+  FaCheckCircle,
   FaChartLine,
   FaBell,
   FaUserCheck,
@@ -17,6 +18,9 @@ const Landing = () => {
   useEffect(() => {
     setIsVisible(true);
   }, []);
+
+  // read auth state once at top-level (hooks must be called unconditionally)
+  const { token, user } = useSelector((state) => state.auth);
 
   const features = [
     {
@@ -65,23 +69,26 @@ const Landing = () => {
                 Duvidha Ki <span className="gradient-text">Suvidha</span>
               </h1>
               <p className="hero-subtitle">
-                Streamline your hostel complaint management. Students can raise complaints seamlessly, 
+                Streamline your hostel complaint management. Students can raise complaints seamlessly,
                 and authorities can resolve them efficiently.
               </p>
               <div className="hero-buttons mt-8 flex flex-wrap gap-4">
-                <Link
-                  to="/signup"
-                  className="hero-btn-primary"
-                >
-                  Get Started
-                  <FaArrowRight className="ml-2 inline" />
-                </Link>
-                <Link
-                  to="/login"
-                  className="hero-btn-outline"
-                >
-                  Sign In
-                </Link>
+                {!token ? (
+                  <>
+                    <Link to="/signup" className="hero-btn-primary">
+                      Get Started
+                      <FaArrowRight className="ml-2 inline" />
+                    </Link>
+                    <Link to="/login" className="hero-btn-outline">
+                      Sign In
+                    </Link>
+                  </>
+                ) : (
+                  <Link to={user?.role === 'maintainer' ? '/admin' : '/dashboard'} className="hero-btn-primary">
+                    {user?.role === 'maintainer' ? 'Go to Admin Panel' : 'Go to Dashboard'}
+                    <FaArrowRight className="ml-2 inline" />
+                  </Link>
+                )}
               </div>
             </div>
             <div className={`lg:w-1/2 hero-visual ${isVisible ? 'fade-in' : ''}`}>
@@ -138,13 +145,17 @@ const Landing = () => {
                 ))}
               </div>
               <div className="mt-6">
-                <Link
-                  to="/signup"
-                  className="github-btn-primary inline-flex items-center"
-                >
-                  Start Managing Complaints
-                  <FaArrowRight className="ml-2" />
-                </Link>
+                {!token ? (
+                  <Link to="/signup" className="github-btn-primary inline-flex items-center">
+                    Start Managing Complaints
+                    <FaArrowRight className="ml-2" />
+                  </Link>
+                ) : (
+                  <Link to={user?.role === 'maintainer' ? '/admin' : '/dashboard'} className="github-btn-primary inline-flex items-center">
+                    {user?.role === 'maintainer' ? 'Go to Admin Panel' : 'Open Dashboard'}
+                    <FaArrowRight className="ml-2" />
+                  </Link>
+                )}
               </div>
             </div>
             <div className="lg:w-1/2">
@@ -179,10 +190,17 @@ const Landing = () => {
             <p className="cta-subtitle mb-8">
               Join hundreds of students and authorities using Duvidha Ki Suvidha to manage complaints efficiently.
             </p>
-            <Link to="/signup" className="cta-button inline-flex items-center">
-              Create Your Account
-              <FaArrowRight className="ml-2" />
-            </Link>
+            {!token ? (
+              <Link to="/signup" className="cta-button inline-flex items-center">
+                Create Your Account
+                <FaArrowRight className="ml-2" />
+              </Link>
+            ) : (
+              <Link to={user?.role === 'maintainer' ? '/admin' : '/dashboard'} className="cta-button inline-flex items-center">
+                {user?.role === 'maintainer' ? 'Go to Admin Panel' : 'Open Dashboard'}
+                <FaArrowRight className="ml-2" />
+              </Link>
+            )}
           </div>
         </div>
       </section>

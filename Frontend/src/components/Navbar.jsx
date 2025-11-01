@@ -20,9 +20,11 @@ const AppNavbar = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Brand */}
-          <Link 
+          <Link
             to="/"
-            className="flex items-center gap-2 text-xl font-semibold text-[#f0f6fc] no-underline"
+            state={{ forcePublic: true }}
+            aria-label="Go to landing page"
+            className="flex items-center gap-2 text-xl font-semibold text-[#f0f6fc] no-underline cursor-pointer"
             style={{
               fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif'
             }}
@@ -35,16 +37,30 @@ const AppNavbar = () => {
           <div className="hidden lg:flex items-center gap-4">
             {token ? (
               <>
+                <Link
+                  to="/dashboard"
+                  className="font-medium text-[#c9d1d9] hover:text-[#f0f6fc] no-underline"
+                >
+                  Dashboard
+                </Link>
+                {user?.role === 'maintainer' && (
+                  <Link
+                    to="/admin"
+                    className="font-medium text-[#c9d1d9] hover:text-[#f0f6fc] no-underline"
+                  >
+                    Admin Panel
+                  </Link>
+                )}
                 <button
                   onClick={handleLogout}
-                  className="px-4 py-2 text-sm font-medium rounded-md border border-[#30363d] text-[#c9d1d9] bg-transparent hover:bg-[#21262d] hover:text-[#f0f6fc] transition-colors hover:cursor-pointer"
+                  className="px-4 py-2 text-sm font-medium rounded-md border border-[#30363d] text-[#c9d1d9] bg-transparent hover:bg-[#21262d] hover:text-[#f0f6fc] transition-colors"
                 >
                   Logout
                 </button>
               </>
             ) : (
               <>
-                <Link 
+                <Link
                   to="/login"
                   className="font-medium text-[#c9d1d9] hover:text-[#f0f6fc] no-underline"
                 >
@@ -81,7 +97,7 @@ const AppNavbar = () => {
             <div className="flex flex-col gap-3">
               {token ? (
                 <>
-                  <Link 
+                  <Link
                     to="/dashboard"
                     className="font-medium px-2 py-2 text-[#c9d1d9]"
                     onClick={() => setIsMenuOpen(false)}
@@ -89,7 +105,7 @@ const AppNavbar = () => {
                     Dashboard
                   </Link>
                   {user?.role === 'maintainer' && (
-                    <Link 
+                    <Link
                       to="/admin"
                       className="font-medium px-2 py-2 text-[#c9d1d9]"
                       onClick={() => setIsMenuOpen(false)}
@@ -109,7 +125,7 @@ const AppNavbar = () => {
                 </>
               ) : (
                 <>
-                  <Link 
+                  <Link
                     to="/login"
                     className="font-medium px-2 py-2 text-[#c9d1d9]"
                     onClick={() => setIsMenuOpen(false)}
