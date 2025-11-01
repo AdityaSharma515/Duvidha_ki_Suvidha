@@ -1,7 +1,7 @@
 import  { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getComplaints, updateComplaintStatus, deleteComplaint } from "../features/complaints/complaintSlice";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import Loader from "../components/Loader";
 import { Container, Row, Col, Form, Button, Table, Badge } from "react-bootstrap";
 
