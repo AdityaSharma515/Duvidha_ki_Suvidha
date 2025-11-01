@@ -14,17 +14,17 @@ import AdminPanel from "./pages/AdminPanel.jsx";
 const ProtectedRoute = ({ children, requireMaintainer = false, noMaintainer = false }) => {
   const { token, user } = useSelector((state) => state.auth);
   if (!token) return <Navigate to="/login" replace />;
-  
+
   // Redirect maintainers away from user-only routes
   if (noMaintainer && user?.role === 'maintainer') {
     return <Navigate to="/admin" replace />;
   }
-  
+
   // Redirect non-maintainers away from admin routes
   if (requireMaintainer && user?.role !== 'maintainer') {
     return <Navigate to="/dashboard" replace />;
   }
-  
+
   return children;
 };
 
@@ -37,7 +37,7 @@ const PublicRoute = ({ children }) => {
 
 function App() {
   return (
-    <>
+    <div className="min-h-screen bg-[#0d1117] text-[#c9d1d9]">
       <Navbar />
       <Toaster position="top-right" />
       <Routes>
@@ -69,7 +69,7 @@ function App() {
             <Register />
           </PublicRoute>
         } />
-        
+
         {/* Landing Page - only accessible when not logged in */}
         <Route path="/" element={
           <PublicRoute>
@@ -77,7 +77,7 @@ function App() {
           </PublicRoute>
         } />
       </Routes>
-    </>
+    </div>
   );
 }
 

@@ -1,8 +1,7 @@
 import React from "react";
 import { useDispatch } from "react-redux";
-import { deleteComplaint } from "../features/complaints/complaintSlice"; // Adjust path if needed
-import Button from "react-bootstrap/Button";
-import Card from "react-bootstrap/Card";
+import { deleteComplaint } from "../features/complaints/complaintSlice";
+import { FaTrash } from "react-icons/fa";
 
 const ComplaintCard = ({ complaint, isAdmin = false }) => {
   const dispatch = useDispatch();
@@ -13,58 +12,59 @@ const ComplaintCard = ({ complaint, isAdmin = false }) => {
     }
   };
 
+  const getStatusColor = (status) => {
+    const s = (status || "").toLowerCase();
+    if (s === "resolved") return "bg-green-500 text-white";
+    if (s === "pending") return "bg-yellow-500 text-black";
+    if (s === "rejected") return "bg-red-500 text-white";
+    return "bg-gray-500 text-white";
+  };
+
   return (
-    <Card className="shadow-sm my-3">
+    <div className="bg-[#161b22] border border-[#30363d] rounded-lg overflow-hidden">
       {complaint.imageUrl && (
-        <Card.Img
-          variant="top"
+        <img
           src={complaint.imageUrl}
           alt="Complaint"
-          style={{ height: "200px", objectFit: "cover" }}
+          className="w-full h-48 object-cover"
           onError={(e) => {
             e.target.style.display = 'none';
           }}
         />
       )}
 
-      <Card.Body>
-        <Card.Title className="text-primary fw-bold">
+      <div className="p-4">
+        <h3 className="text-lg font-semibold mb-2 text-[#58a6ff]">
           {complaint.title || "No Title"}
-        </Card.Title>
+        </h3>
 
-        <Card.Text>{complaint.description || "No description provided."}</Card.Text>
+        <p className="text-[#8b949e] mb-4 text-sm">
+          {complaint.description || "No description provided."}
+        </p>
 
-        <div className="d-flex justify-content-between align-items-center mt-3">
-          <span
-            className={`badge ${
-              complaint.status === "resolved"
-                ? "bg-success"
-                : complaint.status === "pending"
-                ? "bg-warning text-dark"
-                : "bg-secondary"
-            }`}
-          >
-            {complaint.status}
+        <div className="flex justify-between items-center mt-4">
+          <span className={`px-2 py-1 rounded-md text-xs font-medium ${getStatusColor(complaint.status)}`}>
+            {complaint.status || "Unknown"}
           </span>
 
-          <small className="text-muted">
+          <span className="text-sm text-[#8b949e]">
             {new Date(complaint.createdAt).toLocaleDateString()}
-          </small>
+          </span>
         </div>
 
         {isAdmin && (
-          <div className="mt-3 text-end">
-            <Button
-              variant="outline-danger"
-              size="sm"
+          <div className="mt-4 flex justify-end">
+            <button
               onClick={handleDelete}
+              className="px-3 py-1 text-sm border border-red-600 text-red-600 hover:bg-red-900/20 rounded-md transition-colors flex items-center gap-2"
             >
-              <i className="bi bi-trash3"></i> Delete
-            </Button>
+              <FaTrash />
+              Delete
+            </button>
           </div>
         )}
-      </Card.Body>
-    </Card>
+      </div>
+    </div>
   );
 };
 
