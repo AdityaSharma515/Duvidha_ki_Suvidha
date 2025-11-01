@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Toaster } from "react-hot-toast";
 import Navbar from "./components/Navbar.jsx";
@@ -31,7 +31,13 @@ const ProtectedRoute = ({ children, requireMaintainer = false, noMaintainer = fa
 // Public route wrapper (redirects to dashboard if already logged in)
 const PublicRoute = ({ children }) => {
   const { token } = useSelector((state) => state.auth);
-  if (token) return <Navigate to="/dashboard" replace />;
+  const location = useLocation();
+  // If the user is authenticated we normally redirect them away from public routes.
+  // However callers can:
+  // - navigate with state: { forcePublic: true } (used by the brand/logo Link), or
+  // - include a query param ?public=1 so the landing can be opened/bookmarked even when logged in.
+  const urlForce = new URLSearchParams(location.search).get("public") === "1";
+  if (token && !location.state?.forcePublic && !urlForce) return <Navigate to="/dashboard" replace />;
   return children;
 };
 
