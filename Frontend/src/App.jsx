@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Toaster } from "react-hot-toast";
 import Navbar from "./components/Navbar.jsx";
+import Landing from "./pages/Landing.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
@@ -69,13 +70,11 @@ function App() {
           </PublicRoute>
         } />
         
-        {/* Redirect root based on user role */}
+        {/* Landing Page - only accessible when not logged in */}
         <Route path="/" element={
-          <ProtectedRoute>
-            {({ user }) => (
-              <Navigate to={user?.role === 'maintainer' ? "/admin" : "/dashboard"} replace />
-            )}
-          </ProtectedRoute>
+          <PublicRoute>
+            <Landing />
+          </PublicRoute>
         } />
       </Routes>
     </>
