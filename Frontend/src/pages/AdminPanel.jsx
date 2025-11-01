@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getComplaints, updateComplaintStatus, deleteComplaint } from "../features/complaints/complaintSlice";
 import toast from "react-hot-toast";
+import API from "../api/axios.js";
 import Loader from "../components/Loader";
 import { FaCog, FaEye } from "react-icons/fa";
 
@@ -13,6 +14,9 @@ const AdminPanel = () => {
   const [filter, setFilter] = useState("all");
   const [search, setSearch] = useState("");
   const [selectedComplaint, setSelectedComplaint] = useState(null);
+  const [remarkModalOpen, setRemarkModalOpen] = useState(false);
+  const [remarkText, setRemarkText] = useState("");
+  const [remarkTarget, setRemarkTarget] = useState({ id: null, status: null });
 
   useEffect(() => {
     dispatch(getComplaints());
@@ -24,9 +28,9 @@ const AdminPanel = () => {
     return statusMatch && searchMatch;
   });
 
-  const handleStatusChange = async (id, newStatus) => {
+  const handleStatusChange = async (id, newStatus, remark) => {
     try {
-      const resultAction = await dispatch(updateComplaintStatus({ id, status: newStatus }));
+      const resultAction = await dispatch(updateComplaintStatus({ id, status: newStatus, remark }));
       if (updateComplaintStatus.fulfilled.match(resultAction)) {
         toast.success(`Complaint status updated to ${newStatus}`);
         // Refresh the complaints list to ensure consistency
@@ -53,6 +57,19 @@ const AdminPanel = () => {
       } catch (error) {
         toast.error('Failed to delete complaint');
       }
+    }
+  };
+
+  const handleView = async (id) => {
+    try {
+      // Fetch single populated complaint from backend to ensure student details are present
+      const res = await API.get(`/complaints/${id}`);
+      const complaint = res.data?.complaint;
+      if (complaint) setSelectedComplaint(complaint);
+      else toast.error('Failed to load complaint details');
+    } catch (error) {
+      console.error('Error fetching complaint details:', error);
+      toast.error('Failed to load complaint details');
     }
   };
 
@@ -138,11 +155,11 @@ const AdminPanel = () => {
       <div className="overflow-x-auto">
         <table className="w-full border-collapse border border-[#30363d] rounded-lg">
           <thead className="bg-[#21262d]">
-            <tr>
+              <tr>
               <th className="border border-[#30363d] px-4 py-3 text-left text-sm font-semibold text-[#f0f6fc]">#</th>
               <th className="border border-[#30363d] px-4 py-3 text-left text-sm font-semibold text-[#f0f6fc]">Title</th>
-              <th className="border border-[#30363d] px-4 py-3 text-left text-sm font-semibold text-[#f0f6fc]">User</th>
-              <th className="border border-[#30363d] px-4 py-3 text-left text-sm font-semibold text-[#f0f6fc]">Category</th>
+                <th className="border border-[#30363d] px-4 py-3 text-left text-sm font-semibold text-[#f0f6fc]">Student Name</th>
+                <th className="border border-[#30363d] px-4 py-3 text-left text-sm font-semibold text-[#f0f6fc]">Category</th>
               <th className="border border-[#30363d] px-4 py-3 text-left text-sm font-semibold text-[#f0f6fc]">Status</th>
               <th className="border border-[#30363d] px-4 py-3 text-left text-sm font-semibold text-[#f0f6fc]">Date</th>
               <th className="border border-[#30363d] px-4 py-3 text-left text-sm font-semibold text-[#f0f6fc]">Actions</th>
@@ -177,7 +194,7 @@ const AdminPanel = () => {
                   <td className="border border-[#30363d] px-4 py-3">
                     <div className="flex gap-2 flex-wrap">
                       <button
-                        onClick={() => setSelectedComplaint(c)}
+                        onClick={() => handleView(c._id)}
                         className="px-3 py-1 text-sm border border-[#30363d] text-[#c9d1d9] hover:bg-[#21262d] rounded-md transition-colors flex items-center gap-1 hover:cursor-pointer"
                       >
                         <FaEye className="text-xs" />
@@ -192,13 +209,13 @@ const AdminPanel = () => {
                             Start
                           </button>
                           <button
-                            onClick={() => handleStatusChange(c._id, "Resolved")}
+                            onClick={() => { setRemarkTarget({ id: c._id, status: 'Resolved' }); setRemarkText(''); setRemarkModalOpen(true); }}
                             className="px-3 py-1 text-sm bg-[#238636] hover:bg-[#2ea043] text-white rounded-md transition-colors hover:cursor-pointer"
                           >
                             Resolve
                           </button>
                           <button
-                            onClick={() => handleStatusChange(c._id, "Rejected")}
+                            onClick={() => { setRemarkTarget({ id: c._id, status: 'Rejected' }); setRemarkText(''); setRemarkModalOpen(true); }}
                             className="px-3 py-1 text-sm bg-red-600 hover:bg-red-700 text-white rounded-md transition-colors hover:cursor-pointer"
                           >
                             Reject
@@ -208,7 +225,7 @@ const AdminPanel = () => {
                       {c.status === "In Progress" && (
                         <>
                           <button
-                            onClick={() => handleStatusChange(c._id, "Resolved")}
+                            onClick={() => { setRemarkTarget({ id: c._id, status: 'Resolved' }); setRemarkText(''); setRemarkModalOpen(true); }}
                             className="px-3 py-1 text-sm bg-[#238636] hover:bg-[#2ea043] text-white rounded-md transition-colors"
                           >
                             Resolve
@@ -275,6 +292,24 @@ const AdminPanel = () => {
                 </div>
 
                 <div>
+                  <label className="text-sm text-[#8b949e]">Room Number</label>
+                  <div className="text-[#c9d1d9]">{selectedComplaint.studentId?.roomNumber || selectedComplaint.studentId?.roomnumber || selectedComplaint.roomNumber || selectedComplaint.studentRoomNumber || "N/A"}</div>
+                </div>
+
+                <div>
+                  <label className="text-sm text-[#8b949e]">Email</label>
+                  <div className="text-[#c9d1d9]">{selectedComplaint.studentId?.email || selectedComplaint.email || "N/A"}</div>
+                </div>
+
+                {selectedComplaint.remark && (
+                  <div>
+                    <label className="text-sm text-[#8b949e]">Remark</label>
+                    <div className="text-[#c9d1d9]">{selectedComplaint.remark}</div>
+                    <div className="text-xs text-[#8b949e] mt-1">By: {selectedComplaint.remarkBy?.username || 'N/A'} • {selectedComplaint.remarkAt ? new Date(selectedComplaint.remarkAt).toLocaleString() : 'N/A'}</div>
+                  </div>
+                )}
+
+                <div>
                   <label className="text-sm text-[#8b949e]">Category</label>
                   <div className="text-[#c9d1d9]">{selectedComplaint.category || "N/A"}</div>
                 </div>
@@ -307,6 +342,40 @@ const AdminPanel = () => {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Remark Modal */}
+      {remarkModalOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setRemarkModalOpen(false)}>
+          <div className="bg-[#161b22] border border-[#30363d] rounded-lg max-w-md w-full p-6" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-lg font-semibold text-[#f0f6fc] mb-3">Add Remark</h3>
+            <textarea
+              value={remarkText}
+              onChange={(e) => setRemarkText(e.target.value)}
+              placeholder="Add a remark (optional)"
+              className="w-full h-28 p-3 bg-[#0d1117] border border-[#30363d] text-[#c9d1d9] rounded-md"
+            />
+            <div className="mt-4 flex justify-end gap-2">
+              <button
+                onClick={() => setRemarkModalOpen(false)}
+                className="px-3 py-1 border border-[#30363d] text-[#c9d1d9] rounded-md"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={async () => {
+                  setRemarkModalOpen(false);
+                  await handleStatusChange(remarkTarget.id, remarkTarget.status, remarkText);
+                  setRemarkTarget({ id: null, status: null });
+                  setRemarkText('');
+                }}
+                className="px-3 py-1 bg-[#238636] hover:bg-[#2ea043] text-white rounded-md"
+              >
+                Confirm
+              </button>
             </div>
           </div>
         </div>

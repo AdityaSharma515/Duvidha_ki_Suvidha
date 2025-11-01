@@ -37,12 +37,14 @@ const AppNavbar = () => {
           <div className="hidden lg:flex items-center gap-4">
             {token ? (
               <>
-                <Link
-                  to="/dashboard"
-                  className="font-medium text-[#c9d1d9] hover:text-[#f0f6fc] no-underline"
-                >
-                  Dashboard
-                </Link>
+                {user?.role === 'student' && (
+                  <Link
+                    to="/dashboard"
+                    className="font-medium text-[#c9d1d9] hover:text-[#f0f6fc] no-underline"
+                  >
+                    Dashboard
+                  </Link>
+                )}
                 {user?.role === 'maintainer' && (
                   <Link
                     to="/admin"

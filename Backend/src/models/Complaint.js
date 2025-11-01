@@ -22,6 +22,16 @@ const complaintSchema = new mongoose.Schema({
     enum: ["Pending", "In Progress", "Resolved", "Rejected"],
     default: "Pending",
   },
+  remark: {
+    type: String,
+  },
+  remarkBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
+  remarkAt: {
+    type: Date,
+  },
   studentId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
