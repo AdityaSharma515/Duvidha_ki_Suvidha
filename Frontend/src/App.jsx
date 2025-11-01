@@ -64,7 +64,7 @@ function App() {
             <Login />
           </PublicRoute>
         } />
-        <Route path="/register" element={
+        <Route path="/signup" element={
           <PublicRoute>
             <Register />
           </PublicRoute>
