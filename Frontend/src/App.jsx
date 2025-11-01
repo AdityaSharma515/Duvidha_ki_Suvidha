@@ -1,8 +1,7 @@
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { Toaster } from "react-hot-toast";
 import Navbar from "./components/Navbar.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
@@ -39,7 +38,7 @@ function App() {
   return (
     <>
       <Navbar />
-      <ToastContainer position="top-right" autoClose={3000} />
+      <Toaster position="top-right" />
       <Routes>
         {/* Protected Routes */}
         <Route path="/dashboard" element={

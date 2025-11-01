@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { Form, Button, Container } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -22,11 +23,11 @@ const Register = () => {
     try {
       const res = await axios.post("http://localhost:5001/api/v1/auth/signup", formData);
       console.log("✅ Signup success:", res.data);
-      alert("Registered successfully!");
+      toast.success("Registered successfully!");
       navigate("/dashboard");
     } catch (error) {
       console.error("❌ Signup error:", error.response?.data || error.message);
-      alert(error.response?.data?.message || "Signup failed");
+      toast.error(error.response?.data?.message || "Signup failed");
     }
   };
 
