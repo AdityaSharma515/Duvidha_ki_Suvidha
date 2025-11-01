@@ -20,8 +20,8 @@ const AppNavbar = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Brand */}
-          <Link
-            to={token ? "/dashboard" : "/"}
+          <Link 
+            to="/"
             className="flex items-center gap-2 text-xl font-semibold text-[#f0f6fc] no-underline"
             style={{
               fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif'
@@ -35,20 +35,6 @@ const AppNavbar = () => {
           <div className="hidden lg:flex items-center gap-4">
             {token ? (
               <>
-                <Link 
-                  to="/dashboard"
-                  className="font-medium text-[#c9d1d9] hover:text-[#f0f6fc] no-underline"
-                >
-                  Dashboard
-                </Link>
-                {user?.role === 'maintainer' && (
-                  <Link 
-                    to="/admin"
-                    className="font-medium text-[#c9d1d9] hover:text-[#f0f6fc] no-underline"
-                  >
-                    Admin Panel
-                  </Link>
-                )}
                 <button
                   onClick={handleLogout}
                   className="px-4 py-2 text-sm font-medium rounded-md border border-[#30363d] text-[#c9d1d9] bg-transparent hover:bg-[#21262d] hover:text-[#f0f6fc] transition-colors hover:cursor-pointer"

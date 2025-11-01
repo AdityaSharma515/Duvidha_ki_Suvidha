@@ -102,7 +102,7 @@ const AdminPanel = () => {
         </div>
         <button
           onClick={() => dispatch(getComplaints())}
-          className="px-4 py-2 bg-[#0969da] hover:bg-[#0860ca] text-white font-medium rounded-md transition-colors hover:cursor-pointer"
+          className="px-4 py-2 bg-[#0969da] hover:bg-[#0860ca] text-white font-medium rounded-md transition-colors"
         >
           Refresh
         </button>
@@ -209,7 +209,7 @@ const AdminPanel = () => {
                         <>
                           <button
                             onClick={() => handleStatusChange(c._id, "Resolved")}
-                            className="px-3 py-1 text-sm bg-[#238636] hover:bg-[#2ea043] text-white rounded-md transition-colors hover:cursor-pointer"
+                            className="px-3 py-1 text-sm bg-[#238636] hover:bg-[#2ea043] text-white rounded-md transition-colors"
                           >
                             Resolve
                           </button>
