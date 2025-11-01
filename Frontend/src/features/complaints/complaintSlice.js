@@ -47,9 +47,11 @@ export const createComplaint = createAsyncThunk(
 // Update complaint status (Admin only)
 export const updateComplaintStatus = createAsyncThunk(
   "complaint/updateStatus",
-  async ({ id, status }, { rejectWithValue }) => {
+  async ({ id, status, remark }, { rejectWithValue }) => {
     try {
-      const response = await API.patch(`${ENDPOINT}/${id}`, { status });
+      const body = { status };
+      if (typeof remark !== 'undefined') body.remark = remark;
+      const response = await API.patch(`${ENDPOINT}/${id}`, body);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || "Failed to update status");

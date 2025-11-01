@@ -19,6 +19,13 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // Client-side: enforce institutional email domain
+    const domainRegex = /^[A-Za-z0-9._%+-]+@iiitdwd\.ac\.in$/;
+    if (!domainRegex.test(formData.email)) {
+      toast.error("Email must end with @iiitdwd.ac.in");
+      return;
+    }
+
     try {
       const res = await axios.post("http://localhost:5001/api/v1/auth/signup", formData);
       console.log("Signup success:", res.data);
@@ -52,9 +59,11 @@ const Register = () => {
           <input
             type="email"
             name="email"
-            placeholder="Enter email"
+            placeholder="Enter email (must end with @iiitdwd.ac.in)"
             value={formData.email}
             onChange={handleChange}
+            /* pattern removed because some browsers reject the regex string; validation is performed in JS and server-side */
+            title="Please enter an email ending with @iiitdwd.ac.in"
             className="w-full px-4 py-2 border border-[#30363d] rounded-md bg-[#0d1117] text-[#c9d1d9] placeholder-[#8b949e] focus:outline-none focus:ring-2 focus:ring-[#58a6ff] focus:border-transparent"
             required
           />

@@ -56,8 +56,9 @@ export const getUserComplaints = async (req, res) => {
   try {
     const userId = req.user.id;
     const complaints = await Complaint.find({ studentId: userId })
-      .populate("studentId", "username email")
-      .populate("assignedTo", "username email")
+      .populate("studentId", "username email roomNumber")
+      .populate("assignedTo", "username email roomNumber")
+      .populate("remarkBy", "username email")
       .sort({ createdAt: -1 }); // Latest first
 
     res.status(200).json({ complaints });
@@ -70,8 +71,9 @@ export const getUserComplaints = async (req, res) => {
 export const getComplaints = async (req, res) => {
   try {
     const complaints = await Complaint.find()
-      .populate("studentId", "username email")
-      .populate("assignedTo", "username email")
+      .populate("studentId", "username email roomNumber")
+      .populate("assignedTo", "username email roomNumber")
+      .populate("remarkBy", "username email")
       .sort({ createdAt: -1 }); // Latest first
 
     res.status(200).json({ complaints });
@@ -113,8 +115,8 @@ export const deleteComplaint = async (req, res) => {
 // Update complaint status (Admin)
 export const updateComplaintStatus = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { status } = req.body;
+  const { id } = req.params;
+  const { status, remark } = req.body;
 
     if (!status) {
       return res.status(400).json({ message: "Status is required" });
@@ -130,15 +132,42 @@ export const updateComplaintStatus = async (req, res) => {
     if (!complaint) return res.status(404).json({ message: "Complaint not found" });
 
     complaint.status = status;
+    if (typeof remark !== 'undefined') {
+      complaint.remark = remark;
+      // record who added the remark and when
+      complaint.remarkBy = req.user.id;
+      complaint.remarkAt = new Date();
+    }
     await complaint.save();
 
     const populated = await Complaint.findById(complaint._id)
-      .populate("studentId", "name email")
-      .populate("assignedTo", "name email");
+      .populate("studentId", "username email roomNumber")
+      .populate("assignedTo", "username email roomNumber")
+      .populate("remarkBy", "username email");
 
     res.status(200).json({ complaint: populated });
   } catch (error) {
     console.error("Error updating complaint status:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// Get single complaint by id (populated)
+export const getComplaintById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) return res.status(400).json({ message: "Complaint id is required" });
+
+    const complaint = await Complaint.findById(id)
+      .populate("studentId", "username email roomNumber")
+      .populate("assignedTo", "username email roomNumber")
+      .populate("remarkBy", "username email");
+
+    if (!complaint) return res.status(404).json({ message: "Complaint not found" });
+
+    res.status(200).json({ complaint });
+  } catch (error) {
+    console.error("Error fetching complaint by id:", error);
     res.status(500).json({ message: "Server error" });
   }
 };

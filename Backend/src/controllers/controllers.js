@@ -17,7 +17,9 @@ export async function signup(req, res) {
         .string()
         .min(3, "Username must be at least 3 characters")
         .max(15, "Username must not exceed 15 characters"),
-      email: z.string().email("Invalid email format"),
+      email: z.string().email("Invalid email format").refine((e) => /^[A-Za-z0-9._%+-]+@iiitdwd\.ac\.in$/.test(e), {
+        message: "Email must be an @iiitdwd.ac.in address",
+      }),
       password: z
         .string()
         .min(8, "Password must be at least 8 characters")
