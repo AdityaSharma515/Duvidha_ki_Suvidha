@@ -25,9 +25,6 @@ export function auth(req, res, next) {
     req.user = decoded;
     next();
   } catch (error) {
-    if (error.name === "TokenExpiredError") {
-      return res.status(401).json({ message: "Token expired" });
-    }
     console.error("Error verifying token:", error);
     return res.status(401).json({ message: "Invalid or expired token" });
   }
@@ -41,9 +38,9 @@ export function requireRole(role) {
       if (!req.user) {
         return res.status(401).json({ message: "Unauthorized" });
       }
-
+      console.log(req.user.role)
       if (req.user.role !== role) {
-        return res.status(403).json({ message: "Forbidden: insufficient role" });
+        return res.status(403).json({ message: "Unauthorized access" });
       }
 
       next();
