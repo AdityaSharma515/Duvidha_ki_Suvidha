@@ -12,7 +12,7 @@ router.get("/user", auth, getUserComplaints);
 // Admin-only endpoints
 router.get("/all", auth, requireRole("maintainer"), getComplaints);
 // get single complaint
-router.get("/:id", auth, requireRole("maintainer"), getComplaintById);
+router.get("/:id", auth, getComplaintById);
 router.patch("/:id", auth, requireRole("maintainer"), updateComplaintStatus);
 router.delete("/:id", auth, requireRole("maintainer"), deleteComplaint);
 

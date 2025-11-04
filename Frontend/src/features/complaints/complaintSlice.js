@@ -19,9 +19,13 @@ export const getComplaints = createAsyncThunk(
 // Get user's complaints
 export const getUserComplaints = createAsyncThunk(
   "complaint/getUserComplaints",
-  async (_, { rejectWithValue }) => {
+  async (params, { rejectWithValue }) => {
     try {
-      const response = await API.get(`${ENDPOINT}/user`);
+      let url = `${ENDPOINT}/user`;
+      if (params?.public) {
+        url += '?public=true';
+      }
+      const response = await API.get(url);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || "Failed to fetch complaints");
@@ -96,7 +100,7 @@ const complaintSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-      
+
       // Get User Complaints
       .addCase(getUserComplaints.pending, (state) => {
         state.loading = true;

@@ -2,7 +2,7 @@ import Complaint from "../models/Complaint.js";
 
 export const createComplaint = async (req, res) => {
   try {
-    const { title, description, category } = req.body;
+    const { title, description, category, isPublic } = req.body;
     const studentId = req.user.id;
 
     if (!title || !description || !category) {
@@ -11,7 +11,7 @@ export const createComplaint = async (req, res) => {
 
     // Handle file upload result
     const imageUrl = req.file ? req.file.path : null;
-    
+
     const complaint = new Complaint({
       title,
       description,
@@ -19,11 +19,12 @@ export const createComplaint = async (req, res) => {
       studentId,
       imageUrl,
       status: 'Pending', // Matches the enum case in schema
+      isPublic,
       createdAt: new Date()
     });
 
     await complaint.save();
-    
+
     res.status(201).json({
       success: true,
       message: "Complaint filed successfully",
@@ -32,34 +33,49 @@ export const createComplaint = async (req, res) => {
 
   } catch (error) {
     console.error('Error creating complaint:', error);
-    
+
     // Handle specific error types
     if (error.name === 'ValidationError') {
-      return res.status(400).json({ 
-        message: "Invalid complaint data", 
+      return res.status(400).json({
+        message: "Invalid complaint data",
         errors: Object.values(error.errors).map(err => err.message)
       });
     }
-    
+
     if (error.message === 'Only image files are allowed') {
       return res.status(400).json({ message: error.message });
     }
 
-    res.status(500).json({ 
+    res.status(500).json({
       message: "Failed to create complaint",
-      error: error.message 
+      error: error.message
     });
   }
 };
 
+//populate complaints for the user
 export const getUserComplaints = async (req, res) => {
   try {
     const userId = req.user.id;
-    const complaints = await Complaint.find({ studentId: userId })
+    const publicOnly = req.query.public === 'true';
+
+    let query;
+    if (publicOnly) {
+      // Return all public complaints except user's own
+      query = {
+        isPublic: true,
+        studentId: { $ne: userId }
+      };
+    } else {
+      // Return all user's own complaints (public or private)
+      query = { studentId: userId };
+    }
+
+    const complaints = await Complaint.find(query)
       .populate("studentId", "username email roomNumber")
       .populate("assignedTo", "username email roomNumber")
       .populate("remarkBy", "username email")
-      .sort({ createdAt: -1 }); // Latest first
+      .sort({ createdAt: -1 });
 
     res.status(200).json({ complaints });
   } catch (error) {
@@ -68,6 +84,7 @@ export const getUserComplaints = async (req, res) => {
   }
 };
 
+//populate all complaints
 export const getComplaints = async (req, res) => {
   try {
     const complaints = await Complaint.find()
@@ -115,8 +132,8 @@ export const deleteComplaint = async (req, res) => {
 // Update complaint status (Admin)
 export const updateComplaintStatus = async (req, res) => {
   try {
-  const { id } = req.params;
-  const { status, remark } = req.body;
+    const { id } = req.params;
+    const { status, remark } = req.body;
 
     if (!status) {
       return res.status(400).json({ message: "Status is required" });
@@ -152,7 +169,7 @@ export const updateComplaintStatus = async (req, res) => {
   }
 };
 
-// Get single complaint by id (populated)
+// Get single complaint by id 
 export const getComplaintById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -164,6 +181,14 @@ export const getComplaintById = async (req, res) => {
       .populate("remarkBy", "username email");
 
     if (!complaint) return res.status(404).json({ message: "Complaint not found" });
+
+    const isOwner = complaint.studentId._id.toString() === req.user.id;
+    const isAdmin = req.user.role === "maintainer";
+
+    //if the complaint is private && the user is not its owner && its not the admin either, then no access
+    if (!complaint.isPublic && !isOwner && !isAdmin) {
+      return res.status(403).json({ message: "This complaint is private" });
+    }
 
     res.status(200).json({ complaint });
   } catch (error) {
