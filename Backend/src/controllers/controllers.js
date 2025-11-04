@@ -3,15 +3,14 @@ import User from "../models/User.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-// ✅ SIGNUP CONTROLLER
+//SIGNUP CONTROLLER
 export async function signup(req, res) {
   try {
     const { username, email, password, role, roomNumber } = req.body;
 
-    // 🧠 Log incoming data (for debugging)
     console.log("Signup Request Body:", req.body);
 
-    // 🧩 Zod validation
+    //Zod validation
     const schema = z.object({
       username: z
         .string()
@@ -28,7 +27,7 @@ export async function signup(req, res) {
         .regex(/[a-z]/, "Must contain at least one lowercase letter")
         .regex(/[0-9]/, "Must contain at least one number")
         .regex(/[^A-Za-z0-9]/, "Must contain at least one special character"),
-      role: z.enum(["student", "maintainer"]).optional(),
+      role: z.enum(["student", "maintainer"]),
       roomNumber: z.string().optional(),
     });
 
@@ -43,7 +42,7 @@ export async function signup(req, res) {
 
     const validated = result.data;
 
-    // 🚫 Check if username or email already exists
+    //Check if username or email already exists
     const existingUser = await User.findOne({
       $or: [{ username: validated.username }, { email: validated.email }],
     });
@@ -52,10 +51,10 @@ export async function signup(req, res) {
       return res.status(409).json({ message: "Username or email already exists" });
     }
 
-    // 🔐 Hash password
+    //Hash password
     const hashedPassword = await bcrypt.hash(validated.password, 10);
 
-    // 🧾 Create user
+    //Create user
     const newUser = new User({
       username: validated.username,
       email: validated.email,
@@ -66,7 +65,7 @@ export async function signup(req, res) {
 
     await newUser.save();
 
-    // 🔑 Generate token
+    //Generate token
     const token = jwt.sign(
       { id: newUser._id, username: newUser.username, role: newUser.role },
       process.env.JWT_SECRET,

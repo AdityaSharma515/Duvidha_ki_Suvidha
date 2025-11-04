@@ -4,9 +4,9 @@ import { createComplaint, getComplaints, deleteComplaint, updateComplaintStatus,
 import { auth, requireRole } from "../middleware/auth.js";
 
 const router = express.Router();
-
-// User endpoints
-router.post("/", auth, upload.single("image"), createComplaint);
+//api/v1/complaints/{__}
+//User endpoints
+router.post("/", auth, requireRole("student"), upload.single("image"), createComplaint);
 router.get("/user", auth, getUserComplaints);
 
 // Admin-only endpoints
