@@ -41,6 +41,10 @@ const complaintSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User", // Maintainer
   },
+  isPublic: {
+    type: Boolean,
+    default: false
+  }
 }, { timestamps: true });
 
 const Complaint = mongoose.model("Complaint", complaintSchema);

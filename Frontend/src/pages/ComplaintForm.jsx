@@ -15,6 +15,7 @@ const ComplaintForm = () => {
     description: "",
     category: "",
     image: null,
+    isPublic: false,
   });
 
   const handleChange = (e) => {
@@ -32,6 +33,7 @@ const ComplaintForm = () => {
     data.append("title", formData.title);
     data.append("description", formData.description);
     data.append("category", formData.category);
+    data.append("isPublic", formData.isPublic);
     if (formData.image) data.append("image", formData.image);
 
     dispatch(createComplaint(data))
@@ -50,7 +52,7 @@ const ComplaintForm = () => {
       <h2 className="text-center text-2xl font-semibold mb-8 text-[#f0f6fc] flex items-center justify-center gap-2">
         <FaTools className="text-[#58a6ff]" /> Register a Hostel Complaint
       </h2>
-      <form 
+      <form
         className="p-6 border border-[#30363d] rounded-lg bg-[#161b22]"
         onSubmit={handleSubmit}
       >
@@ -104,6 +106,20 @@ const ComplaintForm = () => {
             className="w-full px-4 py-2 border border-[#30363d] rounded-md bg-[#0d1117] text-[#c9d1d9] focus:outline-none focus:ring-2 focus:ring-[#58a6ff] focus:border-transparent file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-[#21262d] file:text-[#c9d1d9] hover:file:bg-[#30363d]"
             onChange={handleChange}
           />
+        </div>
+
+        <div className="mb-4 flex items-center gap-2">
+          <input
+            type="checkbox"
+            name="isPublic"
+            id="isPublic"
+            checked={formData.isPublic}
+            onChange={(e) => setFormData(prev => ({ ...prev, isPublic: e.target.checked }))}
+            className="rounded border-[#30363d] bg-[#0d1117] text-[#58a6ff] focus:ring-2 focus:ring-[#58a6ff] focus:ring-offset-0"
+          />
+          <label htmlFor="isPublic" className="text-sm text-[#c9d1d9]">
+            Make this complaint public (visible to all users)
+          </label>
         </div>
 
         <button

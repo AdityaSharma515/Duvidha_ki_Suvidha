@@ -20,6 +20,12 @@ const ComplaintCard = ({ complaint, isAdmin = false }) => {
     return "bg-gray-500 text-white";
   };
 
+  const getTypeColor = (isPublic) => {
+    return isPublic
+      ? "bg-green-100 text-green-800 border-green-200"
+      : "bg-orange-100 text-orange-800 border-orange-200";
+  };
+
   const timeAgo = (input) => {
     if (!input) return "N/A";
     const date = new Date(input);
@@ -59,6 +65,17 @@ const ComplaintCard = ({ complaint, isAdmin = false }) => {
         <p className="text-[#8b949e] mb-4 text-sm">
           {complaint.description || "No description provided."}
         </p>
+
+        <div className="flex flex-wrap gap-2 mb-3">
+          {complaint.category && (
+            <span className="px-2 py-1 bg-[#21262d] rounded text-xs text-[#c9d1d9]">
+              {complaint.category}
+            </span>
+          )}
+          <span className={`px-2 py-1 rounded text-xs border ${getTypeColor(complaint.isPublic)}`}>
+            {complaint.isPublic ? "Public" : "Private"}
+          </span>
+        </div>
 
         {complaint.remark && (
           <div className="mb-3">

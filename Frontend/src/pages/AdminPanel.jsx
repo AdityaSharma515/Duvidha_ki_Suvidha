@@ -155,11 +155,12 @@ const AdminPanel = () => {
       <div className="overflow-x-auto">
         <table className="w-full border-collapse border border-[#30363d] rounded-lg">
           <thead className="bg-[#21262d]">
-              <tr>
+            <tr>
               <th className="border border-[#30363d] px-4 py-3 text-left text-sm font-semibold text-[#f0f6fc]">#</th>
               <th className="border border-[#30363d] px-4 py-3 text-left text-sm font-semibold text-[#f0f6fc]">Title</th>
-                <th className="border border-[#30363d] px-4 py-3 text-left text-sm font-semibold text-[#f0f6fc]">Student Name</th>
-                <th className="border border-[#30363d] px-4 py-3 text-left text-sm font-semibold text-[#f0f6fc]">Category</th>
+              <th className="border border-[#30363d] px-4 py-3 text-left text-sm font-semibold text-[#f0f6fc]">Student Name</th>
+              <th className="border border-[#30363d] px-4 py-3 text-left text-sm font-semibold text-[#f0f6fc]">Category</th>
+              <th className="border border-[#30363d] px-4 py-3 text-left text-sm font-semibold text-[#f0f6fc]">Type</th>
               <th className="border border-[#30363d] px-4 py-3 text-left text-sm font-semibold text-[#f0f6fc]">Status</th>
               <th className="border border-[#30363d] px-4 py-3 text-left text-sm font-semibold text-[#f0f6fc]">Date</th>
               <th className="border border-[#30363d] px-4 py-3 text-left text-sm font-semibold text-[#f0f6fc]">Actions</th>
@@ -182,6 +183,11 @@ const AdminPanel = () => {
                   </td>
                   <td className="border border-[#30363d] px-4 py-3 text-[#c9d1d9]">
                     <span className="px-2 py-1 bg-[#21262d] rounded text-xs">{c.category || "N/A"}</span>
+                  </td>
+                  <td className="border border-[#30363d] px-4 py-3">
+                    <span className={`px-2 py-1 rounded-md text-xs font-medium ${c.isPublic ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'}`}>
+                      {c.isPublic ? "Public" : "Private"}
+                    </span>
                   </td>
                   <td className="border border-[#30363d] px-4 py-3">
                     <span className={`px-2 py-1 rounded-md text-xs font-medium ${getStatusBadgeColor(c.status)}`}>
@@ -308,6 +314,15 @@ const AdminPanel = () => {
                     <div className="text-xs text-[#8b949e] mt-1">By: {selectedComplaint.remarkBy?.username || 'N/A'} • {selectedComplaint.remarkAt ? new Date(selectedComplaint.remarkAt).toLocaleString() : 'N/A'}</div>
                   </div>
                 )}
+
+                <div>
+                  <label className="text-sm text-[#8b949e]">Type</label>
+                  <div>
+                    <span className={`px-2 py-1 rounded-md text-sm font-medium ${selectedComplaint.isPublic ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'}`}>
+                      {selectedComplaint.isPublic ? "Public" : "Private"}
+                    </span>
+                  </div>
+                </div>
 
                 <div>
                   <label className="text-sm text-[#8b949e]">Category</label>
