@@ -11,6 +11,7 @@ const AdminPanel = () => {
   const { complaints, loading, error } = useSelector((state) => state.complaints);
   const { user } = useSelector((state) => state.auth);
 
+  const [activeTab, setActiveTab] = useState("public");
   const [filter, setFilter] = useState("all");
   const [search, setSearch] = useState("");
   const [selectedComplaint, setSelectedComplaint] = useState(null);
@@ -22,11 +23,26 @@ const AdminPanel = () => {
     dispatch(getComplaints());
   }, [dispatch]);
 
+  const sortByVotes = (complaints) => {
+    return [...complaints].sort((a, b) => {
+      // First, sort by upvotes
+      if (b.upvoteCount !== a.upvoteCount) {
+        return b.upvoteCount - a.upvoteCount;
+      }
+      // If upvotes are equal, sort by downvotes (more downvotes = lower position)
+      return a.downvoteCount - b.downvoteCount;
+    });
+  };
+
   const filteredComplaints = complaints.filter((c) => {
     const statusMatch = filter === "all" || (c.status && c.status.toLowerCase() === filter.toLowerCase());
     const searchMatch = !search || (c.title && c.title.toLowerCase().includes(search.toLowerCase()));
-    return statusMatch && searchMatch;
+    const typeMatch = activeTab === "public" ? c.isPublic : !c.isPublic;
+    return statusMatch && searchMatch && typeMatch;
   });
+
+  // Sort public complaints by votes
+  const sortedComplaints = activeTab === "public" ? sortByVotes(filteredComplaints) : filteredComplaints;
 
   const handleStatusChange = async (id, newStatus, remark) => {
     try {
@@ -93,6 +109,28 @@ const AdminPanel = () => {
         <small className="text-base font-normal text-[#8b949e]">Welcome, {user?.username || "Admin"}</small>
       </div>
 
+      {/* Tabs */}
+      <div className="flex gap-4 mb-6 border-b border-[#30363d]">
+        <button
+          onClick={() => setActiveTab("public")}
+          className={`px-4 py-2 font-medium transition-colors ${activeTab === "public"
+              ? 'text-[#f0f6fc] border-b-2 border-[#58a6ff]'
+              : 'text-[#8b949e] hover:text-[#f0f6fc]'
+            }`}
+        >
+          Public Complaints
+        </button>
+        <button
+          onClick={() => setActiveTab("private")}
+          className={`px-4 py-2 font-medium transition-colors ${activeTab === "private"
+              ? 'text-[#f0f6fc] border-b-2 border-[#58a6ff]'
+              : 'text-[#8b949e] hover:text-[#f0f6fc]'
+            }`}
+        >
+          Private Complaints
+        </button>
+      </div>
+
       {/* Filter Section */}
       <div className="flex flex-wrap items-center gap-4 mb-6">
         <div className="flex-1 min-w-[200px]">
@@ -126,27 +164,25 @@ const AdminPanel = () => {
       </div>
 
       {/* Stats Summary */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div className="bg-[#161b22] border border-[#30363d] rounded-md p-4">
-          <div className="text-sm text-[#8b949e] mb-1">Total</div>
-          <div className="text-2xl font-semibold text-[#f0f6fc]">{complaints.length}</div>
+          <div className="text-sm text-[#8b949e] mb-1">
+            {activeTab === "public" ? "Public Complaints" : "Private Complaints"}
+          </div>
+          <div className="text-2xl font-semibold text-[#f0f6fc]">
+            {complaints.filter(c => activeTab === "public" ? c.isPublic : !c.isPublic).length}
+          </div>
         </div>
         <div className="bg-[#161b22] border border-[#30363d] rounded-md p-4">
           <div className="text-sm text-[#8b949e] mb-1">Pending</div>
           <div className="text-2xl font-semibold text-yellow-500">
-            {complaints.filter(c => (c.status || "").toLowerCase() === "pending").length}
+            {filteredComplaints.filter(c => (c.status || "").toLowerCase() === "pending").length}
           </div>
         </div>
         <div className="bg-[#161b22] border border-[#30363d] rounded-md p-4">
           <div className="text-sm text-[#8b949e] mb-1">Resolved</div>
           <div className="text-2xl font-semibold text-green-500">
-            {complaints.filter(c => (c.status || "").toLowerCase() === "resolved").length}
-          </div>
-        </div>
-        <div className="bg-[#161b22] border border-[#30363d] rounded-md p-4">
-          <div className="text-sm text-[#8b949e] mb-1">Rejected</div>
-          <div className="text-2xl font-semibold text-red-500">
-            {complaints.filter(c => (c.status || "").toLowerCase() === "rejected").length}
+            {filteredComplaints.filter(c => (c.status || "").toLowerCase() === "resolved").length}
           </div>
         </div>
       </div>
@@ -160,21 +196,23 @@ const AdminPanel = () => {
               <th className="border border-[#30363d] px-4 py-3 text-left text-sm font-semibold text-[#f0f6fc]">Title</th>
               <th className="border border-[#30363d] px-4 py-3 text-left text-sm font-semibold text-[#f0f6fc]">Student Name</th>
               <th className="border border-[#30363d] px-4 py-3 text-left text-sm font-semibold text-[#f0f6fc]">Category</th>
-              <th className="border border-[#30363d] px-4 py-3 text-left text-sm font-semibold text-[#f0f6fc]">Type</th>
+              {activeTab === "public" && (
+                <th className="border border-[#30363d] px-4 py-3 text-left text-sm font-semibold text-[#f0f6fc]">Votes</th>
+              )}
               <th className="border border-[#30363d] px-4 py-3 text-left text-sm font-semibold text-[#f0f6fc]">Status</th>
               <th className="border border-[#30363d] px-4 py-3 text-left text-sm font-semibold text-[#f0f6fc]">Date</th>
               <th className="border border-[#30363d] px-4 py-3 text-left text-sm font-semibold text-[#f0f6fc]">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {filteredComplaints.length === 0 ? (
+            {sortedComplaints.length === 0 ? (
               <tr>
-                <td colSpan="7" className="border border-[#30363d] px-4 py-8 text-center text-[#8b949e]">
+                <td colSpan="8" className="border border-[#30363d] px-4 py-8 text-center text-[#8b949e]">
                   {complaints.length === 0 ? "No complaints found." : "No complaints match your filters."}
                 </td>
               </tr>
             ) : (
-              filteredComplaints.map((c, i) => (
+              sortedComplaints.map((c, i) => (
                 <tr key={c._id} className="hover:bg-[#21262d] transition-colors">
                   <td className="border border-[#30363d] px-4 py-3 text-[#c9d1d9]">{i + 1}</td>
                   <td className="border border-[#30363d] px-4 py-3 text-[#c9d1d9] font-medium">{c.title || "No Title"}</td>
@@ -184,11 +222,14 @@ const AdminPanel = () => {
                   <td className="border border-[#30363d] px-4 py-3 text-[#c9d1d9]">
                     <span className="px-2 py-1 bg-[#21262d] rounded text-xs">{c.category || "N/A"}</span>
                   </td>
-                  <td className="border border-[#30363d] px-4 py-3">
-                    <span className={`px-2 py-1 rounded-md text-xs font-medium ${c.isPublic ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'}`}>
-                      {c.isPublic ? "Public" : "Private"}
-                    </span>
-                  </td>
+                  {activeTab === "public" && (
+                    <td className="border border-[#30363d] px-4 py-3">
+                      <div className="flex items-center gap-3 text-sm">
+                        <span className="text-green-500">+{c.upvoteCount || 0}</span>
+                        <span className="text-red-500">-{c.downvoteCount || 0}</span>
+                      </div>
+                    </td>
+                  )}
                   <td className="border border-[#30363d] px-4 py-3">
                     <span className={`px-2 py-1 rounded-md text-xs font-medium ${getStatusBadgeColor(c.status)}`}>
                       {c.status || "Unknown"}
