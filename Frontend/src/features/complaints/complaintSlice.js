@@ -76,6 +76,32 @@ export const deleteComplaint = createAsyncThunk(
   }
 );
 
+// Upvote complaint
+export const upvoteComplaint = createAsyncThunk(
+  "complaint/upvote",
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await API.post(`${ENDPOINT}/${id}/upvote`);
+      return { id, ...response.data };
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || "Failed to upvote");
+    }
+  }
+);
+
+// Downvote complaint
+export const downvoteComplaint = createAsyncThunk(
+  "complaint/downvote",
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await API.post(`${ENDPOINT}/${id}/downvote`);
+      return { id, ...response.data };
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || "Failed to downvote");
+    }
+  }
+);
+
 // Slice
 const complaintSlice = createSlice({
   name: "complaint",
@@ -152,6 +178,36 @@ const complaintSlice = createSlice({
         state.complaints = state.complaints.filter((c) => c._id !== deletedId);
       })
       .addCase(deleteComplaint.rejected, (state, action) => {
+        state.error = action.payload;
+      })
+
+      // Upvote
+      .addCase(upvoteComplaint.fulfilled, (state, action) => {
+        const { id, upvotes, downvotes } = action.payload;
+        const complaint = state.complaints.find(c => c._id === id);
+        if (complaint) {
+          complaint.upvoteCount = upvotes;
+          complaint.downvoteCount = downvotes;
+          complaint.hasUpvoted = !complaint.hasUpvoted;
+          if (complaint.hasDownvoted) complaint.hasDownvoted = false;
+        }
+      })
+      .addCase(upvoteComplaint.rejected, (state, action) => {
+        state.error = action.payload;
+      })
+
+      // Downvote
+      .addCase(downvoteComplaint.fulfilled, (state, action) => {
+        const { id, upvotes, downvotes } = action.payload;
+        const complaint = state.complaints.find(c => c._id === id);
+        if (complaint) {
+          complaint.upvoteCount = upvotes;
+          complaint.downvoteCount = downvotes;
+          complaint.hasDownvoted = !complaint.hasDownvoted;
+          if (complaint.hasUpvoted) complaint.hasUpvoted = false;
+        }
+      })
+      .addCase(downvoteComplaint.rejected, (state, action) => {
         state.error = action.payload;
       });
   },

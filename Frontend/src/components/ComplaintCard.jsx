@@ -1,7 +1,7 @@
 import React from "react";
 import { useDispatch } from "react-redux";
-import { deleteComplaint } from "../features/complaints/complaintSlice";
-import { FaTrash } from "react-icons/fa";
+import { deleteComplaint, upvoteComplaint, downvoteComplaint } from "../features/complaints/complaintSlice";
+import { FaTrash, FaThumbsUp, FaThumbsDown, FaArrowUp, FaLongArrowAltUp, FaCartArrowDown, FaLongArrowAltDown } from "react-icons/fa";
 
 const ComplaintCard = ({ complaint, isAdmin = false }) => {
   const dispatch = useDispatch();
@@ -10,6 +10,14 @@ const ComplaintCard = ({ complaint, isAdmin = false }) => {
     if (window.confirm("Are you sure you want to delete this complaint?")) {
       dispatch(deleteComplaint(complaint._id));
     }
+  };
+
+  const handleUpvote = () => {
+    dispatch(upvoteComplaint(complaint._id));
+  };
+
+  const handleDownvote = () => {
+    dispatch(downvoteComplaint(complaint._id));
   };
 
   const getStatusColor = (status) => {
@@ -90,9 +98,35 @@ const ComplaintCard = ({ complaint, isAdmin = false }) => {
         )}
 
         <div className="flex justify-between items-center mt-4">
-          <span className={`px-2 py-1 rounded-md text-xs font-medium ${getStatusColor(complaint.status)}`}>
-            {complaint.status || "Unknown"}
-          </span>
+          <div className="flex items-center gap-4">
+            <span className={`px-2 py-1 rounded-md text-xs font-medium ${getStatusColor(complaint.status)}`}>
+              {complaint.status || "Unknown"}
+            </span>
+
+            <div className="flex items-center gap-3">
+              <button
+                onClick={handleUpvote}
+                className={`flex items-center gap-1 text-sm transition-colors ${complaint.hasUpvoted
+                    ? 'text-green-500'
+                    : 'text-[#8b949e] hover:text-green-500'
+                  }`}
+              >
+                <FaLongArrowAltUp size={14} />
+                <span>{complaint.upvoteCount || 0}</span>
+              </button>
+
+              <button
+                onClick={handleDownvote}
+                className={`flex items-center gap-1 text-sm transition-colors ${complaint.hasDownvoted
+                    ? 'text-red-500'
+                    : 'text-[#8b949e] hover:text-red-500'
+                  }`}
+              >
+                <FaLongArrowAltDown size={14} />
+                <span>{complaint.downvoteCount || 0}</span>
+              </button>
+            </div>
+          </div>
 
           <span className="text-sm text-[#8b949e]">
             {timeAgo(complaint.createdAt)}
