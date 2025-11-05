@@ -77,7 +77,18 @@ export const getUserComplaints = async (req, res) => {
       .populate("remarkBy", "username email")
       .sort({ createdAt: -1 });
 
-    res.status(200).json({ complaints });
+    // Add user's vote status to each complaint
+    const complaintsWithVoteStatus = complaints.map(complaint => {
+      const hasUpvoted = complaint.upvotedBy.some(uid => uid.toString() === userId.toString());
+      const hasDownvoted = complaint.downvotedBy.some(uid => uid.toString() === userId.toString());
+      return {
+        ...complaint.toObject(),
+        hasUpvoted,
+        hasDownvoted
+      };
+    });
+
+    res.status(200).json({ complaints: complaintsWithVoteStatus });
   } catch (error) {
     console.error("Error fetching user complaints:", error);
     res.status(500).json({ message: "Server error" });
@@ -87,13 +98,25 @@ export const getUserComplaints = async (req, res) => {
 //populate all complaints
 export const getComplaints = async (req, res) => {
   try {
+    const userId = req.user.id;
     const complaints = await Complaint.find()
       .populate("studentId", "username email roomNumber")
       .populate("assignedTo", "username email roomNumber")
       .populate("remarkBy", "username email")
       .sort({ createdAt: -1 }); // Latest first
 
-    res.status(200).json({ complaints });
+    // Add user's vote status to each complaint
+    const complaintsWithVoteStatus = complaints.map(complaint => {
+      const hasUpvoted = complaint.upvotedBy.some(uid => uid.toString() === userId.toString());
+      const hasDownvoted = complaint.downvotedBy.some(uid => uid.toString() === userId.toString());
+      return {
+        ...complaint.toObject(),
+        hasUpvoted,
+        hasDownvoted
+      };
+    });
+
+    res.status(200).json({ complaints: complaintsWithVoteStatus });
   } catch (error) {
     console.error("Error fetching complaints:", error);
     res.status(500).json({ message: "Server error" });
@@ -190,11 +213,97 @@ export const getComplaintById = async (req, res) => {
       return res.status(403).json({ message: "This complaint is private" });
     }
 
-    res.status(200).json({ complaint });
+    // Add user's vote status to complaint
+    const hasUpvoted = complaint.upvotedBy.some(uid => uid.toString() === req.user.id.toString());
+    const hasDownvoted = complaint.downvotedBy.some(uid => uid.toString() === req.user.id.toString());
+    const complaintWithVoteStatus = {
+      ...complaint.toObject(),
+      hasUpvoted,
+      hasDownvoted
+    };
+
+    res.status(200).json({ complaint: complaintWithVoteStatus });
   } catch (error) {
     console.error("Error fetching complaint by id:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
 
+export const upvote = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
 
+    if (!id) return res.status(400).json({ message: "Complaint id is required " });
+
+    const complaint = await Complaint.findById(id);
+    if (!complaint) return res.status(404).json({ message: "Complaint not found" });
+
+    const hasUpvoted = complaint.upvotedBy.some(uid => uid.toString() === userId.toString());
+    const hasDownvoted = complaint.downvotedBy.some(uid => uid.toString() === userId.toString());
+
+    if (hasUpvoted) {
+      //if the user has upvoted, and preseed upvote again, then remove the upvote
+      complaint.upvotedBy.pull(userId);
+      complaint.upvoteCount--;
+    } else {
+      //add upvote
+      complaint.upvotedBy.push(userId);
+      complaint.upvoteCount++;
+      if (hasDownvoted) {
+        complaint.downvotedBy.pull(userId);
+        complaint.downvoteCount--;
+      }
+    }
+
+    await complaint.save();
+
+    res.status(200).json({
+      message: hasUpvoted ? "upvote removed" : "upvoted successfully",
+      upvotes: complaint.upvoteCount,
+      downvotes: complaint.downvoteCount,
+    });
+
+  } catch (error) {
+    console.error("Error in upvoting", error.message);
+    res.status(500).json({ message: "Sever errro" })
+  }
+}
+
+export const downvote = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+
+    if (!id) return res.status(400).json({ message: "Complaint id is required" });
+    const complaint = await Complaint.findById(id);
+    if (!complaint) return res.status(404).json({ message: "Complaint not found" });
+
+    const hasUpvoted = complaint.upvotedBy.some(uid => uid.toString() === userId.toString());
+    const hasDownvoted = complaint.downvotedBy.some(uid => uid.toString() === userId.toString());
+
+    if (hasDownvoted) {
+      //if the user has downvoted, remove their downvote ( they pressed it again )
+      complaint.downvotedBy.pull(userId)
+      complaint.downvoteCount--;
+    } else {
+      complaint.downvotedBy.push(userId);
+      complaint.downvoteCount++;
+      if (hasUpvoted) {
+        complaint.upvotedBy.pull(userId);
+        complaint.upvoteCount--;
+      }
+    }
+
+    await complaint.save();
+
+    res.status(200).json({
+      message: hasDownvoted ? "downvote removed" : "downvoted successfully",
+      upvotes: complaint.upvoteCount,
+      downvotes: complaint.downvoteCount,
+    })
+  } catch (error) {
+    console.error("Error in downvoting", error.message);
+    res.status(500).json({ message: "Sever errro" })
+  }
+}

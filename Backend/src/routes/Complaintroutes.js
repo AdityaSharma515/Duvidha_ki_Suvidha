@@ -1,6 +1,6 @@
 import express from "express";
 import upload from "../utils/multer.js";
-import { createComplaint, getComplaints, deleteComplaint, updateComplaintStatus, getUserComplaints, getComplaintById } from "../controllers/complaintcontroller.js";
+import { createComplaint, getComplaints, deleteComplaint, updateComplaintStatus, getUserComplaints, getComplaintById, upvote, downvote } from "../controllers/complaintcontroller.js";
 import { auth, requireRole } from "../middleware/auth.js";
 
 const router = express.Router();
@@ -16,5 +16,9 @@ router.get("/:id", auth, getComplaintById);
 router.patch("/:id", auth, requireRole("maintainer"), updateComplaintStatus);
 router.delete("/:id", auth, requireRole("maintainer"), deleteComplaint);
 
+
+//upvote downvote
+router.post("/:id/upvote", auth, upvote);
+router.post("/:id/downvote", auth, downvote);
 
 export default router;
