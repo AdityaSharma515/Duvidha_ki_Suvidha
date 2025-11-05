@@ -39,11 +39,27 @@ const complaintSchema = new mongoose.Schema({
   },
   assignedTo: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User", // Maintainer
+    ref: "User",
   },
   isPublic: {
     type: Boolean,
     default: false
+  },
+  upvotedBy: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User"
+  }],
+  downvotedBy: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User"
+  }],
+  upvoteCount: {
+    type: Number,
+    default: 0
+  },
+  downvoteCount: {
+    type: Number,
+    default: 0
   }
 }, { timestamps: true });
 
