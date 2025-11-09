@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
+import User from "../models/User.js";
 
-export function auth(req, res, next) {
+export async function auth(req, res, next) {
   try {
     const authHeader = req.headers.authorization;
     if (!authHeader) {
@@ -20,9 +21,15 @@ export function auth(req, res, next) {
     if (!secret) {
       throw new Error("JWT secret not defined in environment");
     }
-
+    
     const decoded = jwt.verify(token, secret);
-    req.user = decoded;
+    console.log(decoded.id)
+
+    const user = await User.findById(decoded.id);
+    if (!user) {
+      return res.status(401).json({ message: "User not found" });
+    }
+    req.user = user;
     next();
   } catch (error) {
     console.error("Error verifying token:", error);
