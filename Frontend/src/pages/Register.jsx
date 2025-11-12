@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import Button from "../components/Button";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -107,12 +108,12 @@ const Register = () => {
           </select>
         </div>
 
-        <button
+        <Button
           type="submit"
           className="w-full py-2 px-4 bg-[#238636] hover:bg-[#2ea043] text-white font-medium rounded-md transition-colors"
         >
           Register
-        </button>
+        </Button>
       </form>
     </div>
   );
