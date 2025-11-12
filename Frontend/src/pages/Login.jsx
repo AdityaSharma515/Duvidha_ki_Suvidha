@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import Button from "../components/Button";
 import { signinUser } from "../features/auth/authSlice";
 import { useNavigate, Link } from "react-router-dom";
 
@@ -65,7 +64,7 @@ const Login = () => {
 
           {error && <p className="text-red-400 text-sm text-center mb-4">{error}</p>}
 
-          <Button
+          <button
             type="submit"
             className="w-full py-2 px-4 bg-[#238636] hover:bg-[#2ea043] text-white font-medium rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
             disabled={loading}
@@ -81,7 +80,7 @@ const Login = () => {
             ) : (
               "Login"
             )}
-          </Button>
+          </button>
         </form>
 
         <p className="text-center mt-6 text-[#8b949e]">

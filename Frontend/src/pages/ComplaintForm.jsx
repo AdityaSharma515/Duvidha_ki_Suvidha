@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { createComplaint } from "../features/complaints/complaintSlice.js";
 import { FaTools } from "react-icons/fa";
-import Button from "../components/Button";
 
 const ComplaintForm = () => {
   const dispatch = useDispatch();
@@ -123,13 +122,13 @@ const ComplaintForm = () => {
           </label>
         </div>
 
-        <Button
+        <button
           type="submit"
           className="w-full py-2 px-4 bg-[#238636] hover:bg-[#2ea043] text-white font-medium rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={loading}
         >
           {loading ? "Submitting..." : "Submit Complaint"}
-        </Button>
+        </button>
 
         {error && <p className="text-red-400 mt-4 text-center">{error}</p>}
       </form>
