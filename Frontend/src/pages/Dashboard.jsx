@@ -5,6 +5,7 @@ import { getUserComplaints } from "../features/complaints/complaintSlice";
 import ComplaintCard from "../components/ComplaintCard";
 import Loader from "../components/Loader";
 import { FaInbox, FaGlobe } from "react-icons/fa";
+import Button from "../components/Button";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -77,7 +78,7 @@ const Dashboard = () => {
 
       {/* Tabs */}
       <div className="flex gap-4 mb-6 border-b border-[#30363d]">
-        <button
+        <Button
           onClick={() => setActiveTab("my")}
           className={`flex items-center gap-2 px-4 py-2 rounded-t-md transition-colors ${activeTab === "my"
               ? 'bg-[#21262d] text-[#c9d1d9] border-b-2 border-[#58a6ff]'
@@ -86,8 +87,8 @@ const Dashboard = () => {
         >
           <FaInbox />
           My Complaints
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={() => setActiveTab("public")}
           className={`flex items-center gap-2 px-4 py-2 rounded-t-md transition-colors ${activeTab === "public"
               ? 'bg-[#21262d] text-[#c9d1d9] border-b-2 border-[#58a6ff]'
@@ -96,7 +97,7 @@ const Dashboard = () => {
         >
           <FaGlobe />
           Public Complaints
-        </button>
+        </Button>
       </div>
 
       {/* Filters Section */}

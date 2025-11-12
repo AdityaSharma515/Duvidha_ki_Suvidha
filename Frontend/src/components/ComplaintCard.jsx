@@ -2,6 +2,7 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { deleteComplaint, upvoteComplaint, downvoteComplaint } from "../features/complaints/complaintSlice";
 import { FaTrash, FaThumbsUp, FaThumbsDown, FaArrowUp, FaLongArrowAltUp, FaCartArrowDown, FaLongArrowAltDown } from "react-icons/fa";
+import Button from "./Button";
 
 const ComplaintCard = ({ complaint, isAdmin = false }) => {
   const dispatch = useDispatch();
@@ -104,7 +105,7 @@ const ComplaintCard = ({ complaint, isAdmin = false }) => {
             </span>
 
             <div className="flex items-center gap-3">
-              <button
+              <Button
                 onClick={handleUpvote}
                 className={`flex items-center gap-1 text-sm transition-colors ${complaint.hasUpvoted
                     ? 'text-green-500'
@@ -113,9 +114,9 @@ const ComplaintCard = ({ complaint, isAdmin = false }) => {
               >
                 <FaLongArrowAltUp size={14} />
                 <span>{complaint.upvoteCount || 0}</span>
-              </button>
+              </Button>
 
-              <button
+              <Button
                 onClick={handleDownvote}
                 className={`flex items-center gap-1 text-sm transition-colors ${complaint.hasDownvoted
                     ? 'text-red-500'
@@ -124,7 +125,7 @@ const ComplaintCard = ({ complaint, isAdmin = false }) => {
               >
                 <FaLongArrowAltDown size={14} />
                 <span>{complaint.downvoteCount || 0}</span>
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -135,13 +136,13 @@ const ComplaintCard = ({ complaint, isAdmin = false }) => {
 
         {isAdmin && (
           <div className="mt-4 flex justify-end">
-            <button
+            <Button
               onClick={handleDelete}
               className="px-3 py-1 text-sm border border-red-600 text-red-600 hover:bg-red-900/20 rounded-md transition-colors flex items-center gap-2"
             >
               <FaTrash />
               Delete
-            </button>
+            </Button>
           </div>
         )}
       </div>

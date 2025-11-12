@@ -4,6 +4,7 @@ import { getComplaints, updateComplaintStatus, deleteComplaint } from "../featur
 import toast from "react-hot-toast";
 import API from "../api/axios.js";
 import Loader from "../components/Loader";
+import Button from "../components/Button";
 import { FaCog, FaEye } from "react-icons/fa";
 
 const AdminPanel = () => {
@@ -111,7 +112,7 @@ const AdminPanel = () => {
 
       {/* Tabs */}
       <div className="flex gap-4 mb-6 border-b border-[#30363d]">
-        <button
+        <Button
           onClick={() => setActiveTab("public")}
           className={`px-4 py-2 font-medium transition-colors ${activeTab === "public"
               ? 'text-[#f0f6fc] border-b-2 border-[#58a6ff]'
@@ -119,8 +120,8 @@ const AdminPanel = () => {
             }`}
         >
           Public Complaints
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={() => setActiveTab("private")}
           className={`px-4 py-2 font-medium transition-colors ${activeTab === "private"
               ? 'text-[#f0f6fc] border-b-2 border-[#58a6ff]'
@@ -128,7 +129,7 @@ const AdminPanel = () => {
             }`}
         >
           Private Complaints
-        </button>
+        </Button>
       </div>
 
       {/* Filter Section */}
@@ -155,12 +156,12 @@ const AdminPanel = () => {
             <option value="Rejected">Rejected</option>
           </select>
         </div>
-        <button
+        <Button
           onClick={() => dispatch(getComplaints())}
           className="px-4 py-2 bg-[#0969da] hover:bg-[#0860ca] text-white font-medium rounded-md transition-colors"
         >
           Refresh
-        </button>
+        </Button>
       </div>
 
       {/* Stats Summary */}
@@ -240,65 +241,65 @@ const AdminPanel = () => {
                   </td>
                   <td className="border border-[#30363d] px-4 py-3">
                     <div className="flex gap-2 flex-wrap">
-                      <button
+                      <Button
                         onClick={() => handleView(c._id)}
                         className="px-3 py-1 text-sm border border-[#30363d] text-[#c9d1d9] hover:bg-[#21262d] rounded-md transition-colors flex items-center gap-1 hover:cursor-pointer"
                       >
                         <FaEye className="text-xs" />
                         View
-                      </button>
+                      </Button>
                       {c.status === "Pending" && (
                         <>
-                          <button
+                          <Button
                             onClick={() => handleStatusChange(c._id, "In Progress")}
                             className="px-3 py-1 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors hover:cursor-pointer"
                           >
                             Start
-                          </button>
-                          <button
+                          </Button>
+                          <Button
                             onClick={() => { setRemarkTarget({ id: c._id, status: 'Resolved' }); setRemarkText(''); setRemarkModalOpen(true); }}
                             className="px-3 py-1 text-sm bg-[#238636] hover:bg-[#2ea043] text-white rounded-md transition-colors hover:cursor-pointer"
                           >
                             Resolve
-                          </button>
-                          <button
+                          </Button>
+                          <Button
                             onClick={() => { setRemarkTarget({ id: c._id, status: 'Rejected' }); setRemarkText(''); setRemarkModalOpen(true); }}
                             className="px-3 py-1 text-sm bg-red-600 hover:bg-red-700 text-white rounded-md transition-colors hover:cursor-pointer"
                           >
                             Reject
-                          </button>
+                          </Button>
                         </>
                       )}
                       {c.status === "In Progress" && (
                         <>
-                          <button
+                          <Button
                             onClick={() => { setRemarkTarget({ id: c._id, status: 'Resolved' }); setRemarkText(''); setRemarkModalOpen(true); }}
                             className="px-3 py-1 text-sm bg-[#238636] hover:bg-[#2ea043] text-white rounded-md transition-colors"
                           >
                             Resolve
-                          </button>
-                          <button
+                          </Button>
+                          <Button
                             onClick={() => handleStatusChange(c._id, "Pending")}
                             className="px-3 py-1 text-sm border border-[#30363d] text-[#c9d1d9] hover:bg-[#21262d] rounded-md transition-colors hover:cursor-pointer"
                           >
                             Back to Pending
-                          </button>
+                          </Button>
                         </>
                       )}
                       {(c.status === "Resolved" || c.status === "Rejected") && (
-                        <button
+                        <Button
                           onClick={() => handleStatusChange(c._id, "Pending")}
                           className="px-3 py-1 text-sm border border-[#30363d] text-[#c9d1d9] hover:bg-[#21262d] rounded-md transition-colors"
                         >
                           Reopen
-                        </button>
+                        </Button>
                       )}
-                      <button
+                      <Button
                         onClick={() => handleDelete(c._id)}
                         className="px-3 py-1 text-sm border border-red-600 text-red-600 hover:bg-red-900/20 rounded-md transition-colors hover:cursor-pointer"
                       >
                         Delete
-                      </button>
+                      </Button>
                     </div>
                   </td>
                 </tr>
@@ -315,12 +316,12 @@ const AdminPanel = () => {
             <div className="p-6">
               <div className="flex justify-between items-start mb-4">
                 <h3 className="text-xl font-semibold text-[#f0f6fc]">{selectedComplaint.title}</h3>
-                <button
+                <Button
                   onClick={() => setSelectedComplaint(null)}
                   className="text-[#8b949e] hover:text-[#f0f6fc] text-2xl leading-none hover:cursor-pointer"
                 >
                   ×
-                </button>
+                </Button>
               </div>
 
               <div className="space-y-4">
@@ -414,14 +415,14 @@ const AdminPanel = () => {
               placeholder="Add a remark (optional)"
               className="w-full h-28 p-3 bg-[#0d1117] border border-[#30363d] text-[#c9d1d9] rounded-md"
             />
-            <div className="mt-4 flex justify-end gap-2">
-              <button
+              <div className="mt-4 flex justify-end gap-2">
+              <Button
                 onClick={() => setRemarkModalOpen(false)}
                 className="px-3 py-1 border border-[#30363d] text-[#c9d1d9] rounded-md"
               >
                 Cancel
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={async () => {
                   setRemarkModalOpen(false);
                   await handleStatusChange(remarkTarget.id, remarkTarget.status, remarkText);
@@ -431,7 +432,7 @@ const AdminPanel = () => {
                 className="px-3 py-1 bg-[#238636] hover:bg-[#2ea043] text-white rounded-md"
               >
                 Confirm
-              </button>
+              </Button>
             </div>
           </div>
         </div>
