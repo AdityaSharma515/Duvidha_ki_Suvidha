@@ -54,7 +54,20 @@ const ComplaintCard = ({ complaint, isAdmin = false }) => {
   };
 
   return (
-    <div className="bg-[#161b22] border border-[#30363d] rounded-lg overflow-hidden">
+  <div
+  className={`border-l-4 rounded-lg overflow-hidden transition-all duration-300
+              ${complaint.status === "Resolved"
+                ? "border-l-green-500"
+                : complaint.status === "Pending"
+                  ? "border-l-yellow-500"
+                  : "border-l-red-500"}
+              bg-[#161b22] border border-[#30363d]
+              hover:shadow-[0_0_20px_rgba(88,166,255,0.6)]
+              hover:scale-[1.02]`}
+>
+
+
+
       {complaint.imageUrl && (
         <img
           src={complaint.imageUrl}
@@ -105,27 +118,32 @@ const ComplaintCard = ({ complaint, isAdmin = false }) => {
             </span>
 
             <div className="flex items-center gap-3">
-              <Button
-                onClick={handleUpvote}
-                className={`flex items-center gap-1 text-sm transition-colors ${complaint.hasUpvoted
-                    ? 'text-green-500'
-                    : 'text-[#8b949e] hover:text-green-500'
-                  }`}
-              >
-                <FaLongArrowAltUp size={14} />
-                <span>{complaint.upvoteCount || 0}</span>
-              </Button>
+             <button
+  title="Upvote this complaint"
+  onClick={handleUpvote}
+  className={`flex items-center gap-1 text-sm transition-colors cursor-pointer ${
+    complaint.hasUpvoted
+      ? 'text-green-500'
+      : 'text-[#8b949e] hover:text-green-500'
+  }`}
+>
+  <FaLongArrowAltUp size={14} />
+  <span>{complaint.upvoteCount || 0}</span>
+</button>
 
-              <Button
-                onClick={handleDownvote}
-                className={`flex items-center gap-1 text-sm transition-colors ${complaint.hasDownvoted
-                    ? 'text-red-500'
-                    : 'text-[#8b949e] hover:text-red-500'
-                  }`}
-              >
-                <FaLongArrowAltDown size={14} />
-                <span>{complaint.downvoteCount || 0}</span>
-              </Button>
+<button
+  title="Downvote this complaint"
+  onClick={handleDownvote}
+  className={`flex items-center gap-1 text-sm transition-colors cursor-pointer ${
+    complaint.hasDownvoted
+      ? 'text-red-500'
+      : 'text-[#8b949e] hover:text-red-500'
+  }`}
+>
+  <FaLongArrowAltDown size={14} />
+  <span>{complaint.downvoteCount || 0}</span>
+</button>
+
             </div>
           </div>
 

@@ -33,7 +33,8 @@ const AppNavbar = () => {
             <FaExclamationTriangle className="text-2xl" style={{ color: '#58a6ff' }} />
             <span>Duvidha Ki Suvidha</span>
           </Link>
-
+          
+<p className="text-sm text-gray-500 italic">Your voice, our action</p> 
           {/* Desktop Menu */}
           <div className="hidden lg:flex items-center gap-4">
             {token ? (
