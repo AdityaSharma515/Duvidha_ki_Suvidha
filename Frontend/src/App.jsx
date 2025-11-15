@@ -49,6 +49,7 @@ function App() {
       <Routes>
         {/* Protected Routes */}
         <Route path="/dashboard" element={
+          
           <ProtectedRoute noMaintainer={true}>
             <Dashboard />
           </ProtectedRoute>

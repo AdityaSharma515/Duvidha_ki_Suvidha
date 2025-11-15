@@ -3,7 +3,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import Button from "../components/Button";
-
+import InstructionsPopup from "../components/InstructionsPopup";
+ 
 const Register = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -115,6 +116,28 @@ const Register = () => {
           Register
         </Button>
       </form>
+      <InstructionsPopup buttonLabel="Signup Instructions">
+  <h2 className="text-xl font-semibold text-[#58a6ff]">How to Sign Up</h2>
+  <ul className="list-disc pl-5 space-y-2 text-sm text-[#c9d1d9]">
+    <li>Use your official college email.</li>
+    <li>Create a strong password.</li>
+    <li>Email must not be already registered.</li>
+    <li>If you already have an account, log in instead.</li>
+  </ul>
+
+  {/* Nested Popup for Password Format */}
+  <InstructionsPopup buttonLabel="View Password Format">
+    <h3 className="text-lg font-semibold text-[#58a6ff]">Password Requirements</h3>
+    <ul className="list-disc pl-5 space-y-2 text-sm text-[#c9d1d9]">
+      <li>Minimum 6 characters</li>
+      <li>At least 1 uppercase letter</li>
+      <li>At least 1 lowercase letter</li>
+      <li>At least 1 number</li>
+      <li>At least 1 special character (@, #, $, !, etc.)</li>
+    </ul>
+  </InstructionsPopup>
+</InstructionsPopup>
+
     </div>
   );
 };

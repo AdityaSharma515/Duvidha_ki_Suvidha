@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import Button from "../components/Button";
 import { signinUser } from "../features/auth/authSlice";
 import { useNavigate, Link } from "react-router-dom";
+import InstructionsPopup from "../components/InstructionsPopup";
+
 
 const Login = () => {
   const [formData, setFormData] = useState({ username: "", password: "" });
@@ -91,6 +93,14 @@ const Login = () => {
           </Link>
         </p>
       </div>
+      <InstructionsPopup buttonLabel="Login Instructions">
+        <h2 className="text-xl font-semibold mb-3">How to Login</h2>
+        <ul className="list-disc pl-5 space-y-1">
+          <li>Enter your registered email address.</li>
+          <li>Type your correct password.</li>
+          <li>If you forgot your password, contact admin.</li>
+        </ul>
+      </InstructionsPopup>
     </div>
   );
 };
