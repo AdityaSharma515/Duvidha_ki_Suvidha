@@ -20,45 +20,69 @@ const AdminPanel = () => {
   const [remarkText, setRemarkText] = useState("");
   const [remarkTarget, setRemarkTarget] = useState({ id: null, status: null });
 
+  // ⭐ Sorting state
+  const [sort, setSort] = useState("newest");
+
   useEffect(() => {
     dispatch(getComplaints());
   }, [dispatch]);
 
+  // ⭐ Existing vote-based sorting for public tab
   const sortByVotes = (complaints) => {
     return [...complaints].sort((a, b) => {
-      // First, sort by upvotes
       if (b.upvoteCount !== a.upvoteCount) {
         return b.upvoteCount - a.upvoteCount;
       }
-      // If upvotes are equal, sort by downvotes (more downvotes = lower position)
       return a.downvoteCount - b.downvoteCount;
     });
   };
 
+  // ⭐ FIXED filtering (removed the broken <select> from inside filter)
   const filteredComplaints = complaints.filter((c) => {
-    const statusMatch = filter === "all" || (c.status && c.status.toLowerCase() === filter.toLowerCase());
-    const searchMatch = !search || (c.title && c.title.toLowerCase().includes(search.toLowerCase()));
+    const statusMatch =
+      filter === "all" ||
+      (c.status && c.status.toLowerCase() === filter.toLowerCase());
+
+    const searchMatch =
+      !search ||
+      (c.title && c.title.toLowerCase().includes(search.toLowerCase()));
+
     const typeMatch = activeTab === "public" ? c.isPublic : !c.isPublic;
+
     return statusMatch && searchMatch && typeMatch;
   });
 
-  // Sort public complaints by votes
-  const sortedComplaints = activeTab === "public" ? sortByVotes(filteredComplaints) : filteredComplaints;
+  // ⭐ NEW — Date Sorting (Newest → Oldest or Oldest → Newest)
+  const dateSortedComplaints = [...filteredComplaints].sort((a, b) => {
+    const da = new Date(a.createdAt);
+    const db = new Date(b.createdAt);
+    return sort === "newest" ? db - da : da - db;
+  });
+
+  // ⭐ Final sorting output:
+  // Public tab → sort by votes THEN date
+  // Private tab → sort ONLY by date
+  const sortedComplaints =
+    activeTab === "public"
+      ? sortByVotes(dateSortedComplaints)
+      : dateSortedComplaints;
 
   const handleStatusChange = async (id, newStatus, remark) => {
     try {
-      const resultAction = await dispatch(updateComplaintStatus({ id, status: newStatus, remark }));
+      const resultAction = await dispatch(
+        updateComplaintStatus({ id, status: newStatus, remark })
+      );
       if (updateComplaintStatus.fulfilled.match(resultAction)) {
         toast.success(`Complaint status updated to ${newStatus}`);
-        // Refresh the complaints list to ensure consistency
         dispatch(getComplaints());
       } else {
-        toast.error(resultAction.payload || 'Failed to update complaint status');
+        toast.error(resultAction.payload || "Failed to update complaint status");
       }
     } catch (error) {
-      toast.error('Failed to update complaint status');
+      toast.error("Failed to update complaint status");
     }
   };
+
 
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this complaint?")) {
@@ -133,36 +157,56 @@ const AdminPanel = () => {
       </div>
 
       {/* Filter Section */}
-      <div className="flex flex-wrap items-center gap-4 mb-6">
-        <div className="flex-1 min-w-[200px]">
-          <input
-            type="text"
-            placeholder="Search complaints..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full px-4 py-2 border border-[#30363d] rounded-md bg-[#0d1117] text-[#c9d1d9] placeholder-[#8b949e] focus:outline-none focus:ring-2 focus:ring-[#58a6ff] focus:border-transparent"
-          />
-        </div>
-        <div className="min-w-[150px]">
-          <select
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            className="w-full px-4 py-2 border border-[#30363d] rounded-md bg-[#0d1117] text-[#c9d1d9] focus:outline-none focus:ring-2 focus:ring-[#58a6ff] focus:border-transparent"
-          >
-            <option value="all">All Complaints</option>
-            <option value="Pending">Pending</option>
-            <option value="In Progress">In Progress</option>
-            <option value="Resolved">Resolved</option>
-            <option value="Rejected">Rejected</option>
-          </select>
-        </div>
-        <Button
-          onClick={() => dispatch(getComplaints())}
-          className="px-4 py-2 bg-[#0969da] hover:bg-[#0860ca] text-white font-medium rounded-md transition-colors"
-        >
-          Refresh
-        </Button>
-      </div>
+<div className="flex items-center gap-4 mb-6 w-full">
+
+  {/* Search (broad input, grows to fill space) */}
+  <input
+    type="text"
+    placeholder="Search complaints..."
+    value={search}
+    onChange={(e) => setSearch(e.target.value)}
+    className="h-10 flex-grow min-w-[250px] px-3 bg-[#0d1117] border border-[#30363d] 
+               rounded-md text-[#c9d1d9] text-sm placeholder-[#8b949e]
+               focus:outline-none focus:ring-2 focus:ring-[#58a6ff]"
+  />
+
+  {/* Sort */}
+  <select
+    value={sort}
+    onChange={(e) => setSort(e.target.value)}
+    className="h-10 px-3 bg-[#0d1117] border border-[#30363d] 
+               rounded-md text-[#c9d1d9] text-sm focus:outline-none 
+               focus:ring-2 focus:ring-[#58a6ff]"
+  >
+    <option value="newest">Newest First</option>
+    <option value="oldest">Oldest First</option>
+  </select>
+
+  {/* Status Filter */}
+  <select
+    value={filter}
+    onChange={(e) => setFilter(e.target.value)}
+    className="h-10 px-3 bg-[#0d1117] border border-[#30363d] 
+               rounded-md text-[#c9d1d9] text-sm focus:outline-none 
+               focus:ring-2 focus:ring-[#58a6ff]"
+  >
+    <option value="all">All Complaints</option>
+    <option value="Pending">Pending</option>
+    <option value="In Progress">In Progress</option>
+    <option value="Resolved">Resolved</option>
+    <option value="Rejected">Rejected</option>
+  </select>
+
+  {/* Refresh Button */}
+  <Button
+    onClick={() => dispatch(getComplaints())}
+    className="h-10 px-4 bg-[#0969da] hover:bg-[#0860ca] 
+               text-white font-medium rounded-md transition-colors"
+  >
+    Refresh
+  </Button>
+</div>
+ 
 
       {/* Stats Summary */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">

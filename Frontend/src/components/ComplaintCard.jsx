@@ -4,6 +4,7 @@ import { deleteComplaint, upvoteComplaint, downvoteComplaint } from "../features
 import { FaTrash, FaThumbsUp, FaThumbsDown, FaArrowUp, FaLongArrowAltUp, FaCartArrowDown, FaLongArrowAltDown } from "react-icons/fa";
 import Button from "./Button";
 
+
 const ComplaintCard = ({ complaint, isAdmin = false }) => {
   const dispatch = useDispatch();
 
@@ -53,6 +54,12 @@ const ComplaintCard = ({ complaint, isAdmin = false }) => {
     return `${years} year${years === 1 ? '' : 's'} ago`;
   };
 
+  const isNew = () => {
+  if (!complaint.createdAt) return false;
+  const createdTime = new Date(complaint.createdAt).getTime();
+  return (Date.now() - createdTime) < 6 * 60 * 60 * 1000; // last 6 hours
+};
+
   return (
   <div
   className={`border-l-4 rounded-lg overflow-hidden transition-all duration-300
@@ -80,15 +87,26 @@ const ComplaintCard = ({ complaint, isAdmin = false }) => {
       )}
 
       <div className="p-4">
-        <h3 className="text-lg font-semibold mb-2 text-[#58a6ff]">
-          {complaint.title || "No Title"}
-        </h3>
+       <div className="flex items-center gap-2">
+  <h3 className="text-lg font-semibold mb-2 text-[#58a6ff]">
+    {complaint.title || "No Title"}
+  </h3>
+
+  {isNew() && (
+    <span className="relative flex h-3 w-3">
+      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
+      <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+    </span>
+  )}
+</div>
+
 
         <p className="text-[#8b949e] mb-4 text-sm">
           {complaint.description || "No description provided."}
         </p>
 
         <div className="flex flex-wrap gap-2 mb-3">
+
           {complaint.category && (
             <span className="px-2 py-1 bg-[#21262d] rounded text-xs text-[#c9d1d9]">
               {complaint.category}
