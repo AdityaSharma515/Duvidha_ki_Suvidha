@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../features/auth/authSlice";
 import { Link, useNavigate } from "react-router-dom";
-import { FaExclamationTriangle } from "react-icons/fa";
+import { FaExclamationTriangle, FaSun, FaMoon } from "react-icons/fa";
 import Button from "./Button";
 
 const AppNavbar = () => {
@@ -10,6 +10,23 @@ const AppNavbar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [theme, setTheme] = useState(() => {
+    try {
+      return localStorage.getItem('theme') || 'dark';
+    } catch (e) {
+      return 'dark';
+    }
+  });
+
+  useEffect(() => {
+    try {
+      if (theme === 'light') document.documentElement.classList.add('light');
+      else document.documentElement.classList.remove('light');
+      localStorage.setItem('theme', theme);
+    } catch (e) {
+      // ignore
+    }
+  }, [theme]);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -55,12 +72,21 @@ const AppNavbar = () => {
                     Admin Panel
                   </Link>
                 )}
+                <div className="flex items-center gap-2">
+                <Button
+                  onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                  className="px-2 py-2 text-sm rounded-md border border-[#30363d] text-[#c9d1d9] bg-transparent hover:bg-[#21262d] transition-colors"
+                  aria-label="Toggle theme"
+                >
+                  {theme === 'dark' ? <FaSun /> : <FaMoon />}
+                </Button>
                 <Button
                   onClick={handleLogout}
                   className="px-4 py-2 text-sm font-medium rounded-md border border-[#30363d] text-[#c9d1d9] bg-transparent hover:bg-[#21262d] hover:text-[#f0f6fc] transition-colors"
                 >
                   Logout
                 </Button>
+                </div>
               </>
             ) : (
               <>
@@ -117,6 +143,14 @@ const AppNavbar = () => {
                       Admin Panel
                     </Link>
                   )}
+                  <div className="flex items-center gap-2">
+                  <Button
+                    onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                    className="px-2 py-2 text-sm rounded-md border border-[#30363d] text-[#c9d1d9] bg-transparent hover:bg-[#21262d] transition-colors"
+                    aria-label="Toggle theme"
+                  >
+                    {theme === 'dark' ? <FaSun /> : <FaMoon />}
+                  </Button>
                   <Button
                     onClick={() => {
                       handleLogout();
@@ -126,6 +160,7 @@ const AppNavbar = () => {
                   >
                     Logout
                   </Button>
+                  </div>
                 </>
               ) : (
                 <>
