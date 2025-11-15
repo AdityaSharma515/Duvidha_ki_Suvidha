@@ -43,7 +43,7 @@ const PublicRoute = ({ children }) => {
 
 function App() {
   return (
-    <div className="min-h-screen bg-[#0d1117] text-[#c9d1d9]">
+    <div className="min-h-screen">
       <Navbar />
       <Toaster position="top-right" />
       <Routes>

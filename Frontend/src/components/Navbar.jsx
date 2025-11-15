@@ -6,6 +6,7 @@ import { FaExclamationTriangle, FaSun, FaMoon } from "react-icons/fa";
 import Button from "./Button";
 
 const AppNavbar = () => {
+  // State and other hooks
   const { token, user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -54,6 +55,15 @@ const AppNavbar = () => {
 <p className="text-sm text-gray-500 italic">Your voice, our action</p> 
           {/* Desktop Menu */}
           <div className="hidden lg:flex items-center gap-4">
+            {/* Theme Toggle */}
+            <Button
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              className="px-2 py-2 text-sm rounded-md border border-[#30363d] text-[#c9d1d9] bg-transparent hover:bg-[#21262d] transition-colors"
+              aria-label="Toggle theme"
+            >
+              {theme === 'dark' ? <FaSun /> : <FaMoon />}
+            </Button>
+
             {token ? (
               <>
                 {user?.role === 'student' && (
@@ -73,19 +83,12 @@ const AppNavbar = () => {
                   </Link>
                 )}
                 <div className="flex items-center gap-2">
-                <Button
-                  onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                  className="px-2 py-2 text-sm rounded-md border border-[#30363d] text-[#c9d1d9] bg-transparent hover:bg-[#21262d] transition-colors"
-                  aria-label="Toggle theme"
-                >
-                  {theme === 'dark' ? <FaSun /> : <FaMoon />}
-                </Button>
-                <Button
-                  onClick={handleLogout}
-                  className="px-4 py-2 text-sm font-medium rounded-md border border-[#30363d] text-[#c9d1d9] bg-transparent hover:bg-[#21262d] hover:text-[#f0f6fc] transition-colors"
-                >
-                  Logout
-                </Button>
+                  <Button
+                    onClick={handleLogout}
+                    className="px-4 py-2 text-sm font-medium rounded-md border border-[#30363d] text-[#c9d1d9] bg-transparent hover:bg-[#21262d] hover:text-[#f0f6fc] transition-colors"
+                  >
+                    Logout
+                  </Button>
                 </div>
               </>
             ) : (
@@ -143,24 +146,17 @@ const AppNavbar = () => {
                       Admin Panel
                     </Link>
                   )}
-                  <div className="flex items-center gap-2">
-                  <Button
-                    onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                    className="px-2 py-2 text-sm rounded-md border border-[#30363d] text-[#c9d1d9] bg-transparent hover:bg-[#21262d] transition-colors"
-                    aria-label="Toggle theme"
-                  >
-                    {theme === 'dark' ? <FaSun /> : <FaMoon />}
-                  </Button>
-                  <Button
-                    onClick={() => {
-                      handleLogout();
-                      setIsMenuOpen(false);
-                    }}
-                    className="text-left px-2 py-2 font-medium rounded-md border border-[#30363d] text-[#c9d1d9] bg-transparent hover:bg-[#21262d]"
-                  >
-                    Logout
-                  </Button>
-                  </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        onClick={() => {
+                          handleLogout();
+                          setIsMenuOpen(false);
+                        }}
+                        className="text-left px-2 py-2 font-medium rounded-md border border-[#30363d] text-[#c9d1d9] bg-transparent hover:bg-[#21262d]"
+                      >
+                        Logout
+                      </Button>
+                    </div>
                 </>
               ) : (
                 <>
@@ -181,6 +177,19 @@ const AppNavbar = () => {
                 </>
               )}
             </div>
+              {/* Mobile theme toggle (always visible) */}
+              <div>
+                <Button
+                  onClick={() => {
+                    setTheme(theme === 'dark' ? 'light' : 'dark');
+                    setIsMenuOpen(false);
+                  }}
+                  className="px-2 py-2 text-sm rounded-md border border-[#30363d] text-[#c9d1d9] bg-transparent hover:bg-[#21262d] transition-colors"
+                  aria-label="Toggle theme"
+                >
+                  {theme === 'dark' ? <FaSun /> : <FaMoon />}
+                </Button>
+              </div>
           </div>
         )}
       </div>
