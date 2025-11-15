@@ -35,7 +35,7 @@ export async function signup(req, res) {
 
     if (!result.success) {
       return res.status(400).json({
-        message: "Invalid input",
+        message: "Input correct password format",
         errors: result.error.issues,
       });
     }

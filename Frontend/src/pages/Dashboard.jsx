@@ -11,6 +11,8 @@ const Dashboard = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const [sort, setSort] = useState("newest"); // Sorting state
+
   const { complaints = [], loading, error } = useSelector(
     (state) => state.complaints || {}
   );
@@ -18,8 +20,8 @@ const Dashboard = () => {
   const { user } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    if (user?.role === 'maintainer') {
-      navigate('/admin');
+    if (user?.role === "maintainer") {
+      navigate("/admin");
       return;
     }
     dispatch(getUserComplaints());
@@ -34,29 +36,34 @@ const Dashboard = () => {
     if (activeTab === "my") {
       dispatch(getUserComplaints());
     } else {
-      // ToDo: Replace with the actual action for public complaints
       dispatch(getUserComplaints({ public: true }));
     }
   }, [dispatch, activeTab]);
 
   const filteredComplaints = complaints.filter((c) => {
-    // Filter by status
     const status = (c.status || "").toString();
     if (filter !== "all" && status.toLowerCase() !== filter.toLowerCase()) return false;
 
-    // Filter by search
-    if (search && !(c.title || "").toLowerCase().includes(search.toLowerCase())) return false;
+    if (search && !(c.title || "").toLowerCase().includes(search.toLowerCase()))
+      return false;
 
-    // Filter by type (only in "My Complaints" tab)
     if (activeTab === "my" && typeFilter !== "all") {
       const isPublic = typeFilter === "public";
       if (c.isPublic !== isPublic) return false;
     }
 
-    // Filter by tab
     if (activeTab === "public" && !c.isPublic) return false;
 
     return true;
+  });
+
+  // ⭐ Apply Sorting (Newest → Oldest or reverse)
+  const sortedComplaints = [...filteredComplaints].sort((a, b) => {
+    const dateA = new Date(a.createdAt);
+    const dateB = new Date(b.createdAt);
+
+    if (sort === "newest") return dateB - dateA;
+    return dateA - dateB; // oldest first
   });
 
   if (loading) return <Loader />;
@@ -80,69 +87,93 @@ const Dashboard = () => {
       <div className="flex gap-4 mb-6 border-b border-[#30363d]">
         <Button
           onClick={() => setActiveTab("my")}
-          className={`flex items-center gap-2 px-4 py-2 rounded-t-md transition-colors ${activeTab === "my"
-              ? 'bg-[#21262d] text-[#c9d1d9] border-b-2 border-[#58a6ff]'
-              : 'hover:bg-[#21262d]/50 text-[#8b949e]'
-            }`}
+          className={`flex items-center gap-2 px-4 py-2 rounded-t-md transition-colors ${
+            activeTab === "my"
+              ? "bg-[#21262d] text-[#c9d1d9] border-b-2 border-[#58a6ff]"
+              : "hover:bg-[#21262d]/50 text-[#8b949e]"
+          }`}
         >
           <FaInbox />
           My Complaints
         </Button>
+
         <Button
           onClick={() => setActiveTab("public")}
-          className={`flex items-center gap-2 px-4 py-2 rounded-t-md transition-colors ${activeTab === "public"
-              ? 'bg-[#21262d] text-[#c9d1d9] border-b-2 border-[#58a6ff]'
-              : 'hover:bg-[#21262d]/50 text-[#8b949e]'
-            }`}
+          className={`flex items-center gap-2 px-4 py-2 rounded-t-md transition-colors ${
+            activeTab === "public"
+              ? "bg-[#21262d] text-[#c9d1d9] border-b-2 border-[#58a6ff]"
+              : "hover:bg-[#21262d]/50 text-[#8b949e]"
+          }`}
         >
           <FaGlobe />
           Public Complaints
         </Button>
       </div>
+{/* Filters Section */}
+<div className="flex items-center gap-3 mb-6 w-full">
 
-      {/* Filters Section */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <input
-          type="text"
-          placeholder="Search complaints..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="px-4 py-2 bg-[#0d1117] border border-[#30363d] rounded-md text-[#c9d1d9] placeholder-[#8b949e] focus:outline-none focus:ring-2 focus:ring-[#58a6ff] focus:border-transparent"
-        />
+  {/* Search (comes FIRST now) */}
+  <input
+    type="text"
+    placeholder="Search complaints..."
+    value={search}
+    onChange={(e) => setSearch(e.target.value)}
+    className="h-10 flex-grow min-w-[200px] px-3 bg-[#0d1117] border border-[#30363d] 
+               rounded-md text-[#c9d1d9] text-sm placeholder-[#8b949e] 
+               focus:outline-none focus:ring-2 focus:ring-[#58a6ff]"
+  />
 
-        <select
-          value={filter}
-          onChange={(e) => setFilter(e.target.value)}
-          className="px-4 py-2 bg-[#0d1117] border border-[#30363d] rounded-md text-[#c9d1d9] focus:outline-none focus:ring-2 focus:ring-[#58a6ff] focus:border-transparent"
-        >
-          <option value="all">All Status</option>
-          <option value="pending">Pending</option>
-          <option value="in progress">In Progress</option>
-          <option value="resolved">Resolved</option>
-          <option value="rejected">Rejected</option>
-        </select>
+  {/* Sort (SECOND now) */}
+  <select
+    value={sort}
+    onChange={(e) => setSort(e.target.value)}
+    className="h-10 px-3 bg-[#0d1117] border border-[#30363d] 
+               rounded-md text-[#c9d1d9] text-sm focus:outline-none 
+               focus:ring-2 focus:ring-[#58a6ff]"
+  >
+    <option value="newest">Newest First</option>
+    <option value="oldest">Oldest First</option>
+  </select>
 
-        {activeTab === "my" && (
-          <select
-            value={typeFilter}
-            onChange={(e) => setTypeFilter(e.target.value)}
-            className="px-4 py-2 bg-[#0d1117] border border-[#30363d] rounded-md text-[#c9d1d9] focus:outline-none focus:ring-2 focus:ring-[#58a6ff] focus:border-transparent"
-          >
-            <option value="all">All Types</option>
-            <option value="public">Public</option>
-            <option value="private">Private</option>
-          </select>
-        )}
-      </div>
+  {/* Status Filter */}
+  <select
+    value={filter}
+    onChange={(e) => setFilter(e.target.value)}
+    className="h-10 px-3 bg-[#0d1117] border border-[#30363d] rounded-md 
+               text-[#c9d1d9] text-sm focus:outline-none focus:ring-2 focus:ring-[#58a6ff]"
+  >
+    <option value="all">All Status</option>
+    <option value="pending">Pending</option>
+    <option value="in progress">In Progress</option>
+    <option value="resolved">Resolved</option>
+    <option value="rejected">Rejected</option>
+  </select>
+
+  {/* Type Filter — Only when "My Complaints" tab is active */}
+  {activeTab === "my" && (
+    <select
+      value={typeFilter}
+      onChange={(e) => setTypeFilter(e.target.value)}
+      className="h-10 px-3 bg-[#0d1117] border border-[#30363d] 
+                 rounded-md text-[#c9d1d9] text-sm focus:outline-none 
+                 focus:ring-2 focus:ring-[#58a6ff]"
+    >
+      <option value="all">All Types</option>
+      <option value="public">Public</option>
+      <option value="private">Private</option>
+    </select>
+  )}
+
+</div>
 
       {/* Complaint List */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredComplaints.length === 0 ? (
+        {sortedComplaints.length === 0 ? (
           <div className="col-span-full">
             <p className="text-center mt-12 text-[#8b949e]">No complaints found.</p>
           </div>
         ) : (
-          filteredComplaints.map((complaint) => (
+          sortedComplaints.map((complaint) => (
             <ComplaintCard key={complaint._id} complaint={complaint} isAdmin={false} />
           ))
         )}
