@@ -23,7 +23,6 @@ export async function auth(req, res, next) {
     }
     
     const decoded = jwt.verify(token, secret);
-    console.log(decoded.id)
 
     const user = await User.findById(decoded.id);
     if (!user) {
