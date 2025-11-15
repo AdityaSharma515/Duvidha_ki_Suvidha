@@ -26,7 +26,7 @@ body {
 .light [class*="bg-[#238636]"] { background-color: #238636 !important; }
 .light [class*="bg-[#238636]"]:hover { filter: brightness(0.95) !important; }
 .light [class*="bg-[#0969da]"] { background-color: #0969da !important; }
-.ight [class*="bg-[#0969da]"] { background-color: #0969da !important; }
+
 
 
 
