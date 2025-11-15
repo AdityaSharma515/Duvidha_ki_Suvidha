@@ -6,6 +6,7 @@ import ComplaintCard from "../components/ComplaintCard";
 import Loader from "../components/Loader";
 import { FaInbox, FaGlobe } from "react-icons/fa";
 import Button from "../components/Button";
+import NoComplaintAnimation from "../components/NoComplaintAnimation";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -170,7 +171,10 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {sortedComplaints.length === 0 ? (
           <div className="col-span-full">
-            <p className="text-center mt-12 text-[#8b949e]">No complaints found.</p>
+            <NoComplaintAnimation
+              message="No complaints yet"
+              sub="You haven't raised any complaints. Click 'Raise Complaint' to submit one."
+            />
           </div>
         ) : (
           sortedComplaints.map((complaint) => (

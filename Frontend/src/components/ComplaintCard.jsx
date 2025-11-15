@@ -136,31 +136,31 @@ const ComplaintCard = ({ complaint, isAdmin = false }) => {
             </span>
 
             <div className="flex items-center gap-3">
-             <button
-  title="Upvote this complaint"
-  onClick={handleUpvote}
-  className={`flex items-center gap-1 text-sm transition-colors cursor-pointer ${
-    complaint.hasUpvoted
-      ? 'text-green-500'
-      : 'text-[#8b949e] hover:text-green-500'
-  }`}
->
-  <FaLongArrowAltUp size={14} />
-  <span>{complaint.upvoteCount || 0}</span>
-</button>
+              <Button
+                title="Upvote this complaint"
+                onClick={handleUpvote}
+                className={`flex items-center gap-1 text-sm transition-colors cursor-pointer ${
+                  complaint.hasUpvoted
+                    ? 'text-green-500'
+                    : 'text-[#8b949e] hover:text-green-500'
+                }`}
+              >
+                <FaLongArrowAltUp size={14} />
+                <span>{complaint.upvoteCount || 0}</span>
+              </Button>
 
-<button
-  title="Downvote this complaint"
-  onClick={handleDownvote}
-  className={`flex items-center gap-1 text-sm transition-colors cursor-pointer ${
-    complaint.hasDownvoted
-      ? 'text-red-500'
-      : 'text-[#8b949e] hover:text-red-500'
-  }`}
->
-  <FaLongArrowAltDown size={14} />
-  <span>{complaint.downvoteCount || 0}</span>
-</button>
+              <Button
+                title="Downvote this complaint"
+                onClick={handleDownvote}
+                className={`flex items-center gap-1 text-sm transition-colors cursor-pointer ${
+                  complaint.hasDownvoted
+                    ? 'text-red-500'
+                    : 'text-[#8b949e] hover:text-red-500'
+                }`}
+              >
+                <FaLongArrowAltDown size={14} />
+                <span>{complaint.downvoteCount || 0}</span>
+              </Button>
 
             </div>
           </div>
