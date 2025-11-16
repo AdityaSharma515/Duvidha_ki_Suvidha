@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = process.env.BACKEND+"api/v1/auth" || "http://localhost:5001/api/v1/auth";
+const API_BASE_URL = import.meta.env.VITE_BACKEND_URL+"api/v1/auth";
 
 // Signup API
 export const signupApi = async (userData) => {

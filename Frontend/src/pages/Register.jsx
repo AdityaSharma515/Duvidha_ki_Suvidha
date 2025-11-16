@@ -30,7 +30,7 @@ const Register = () => {
     }
 
     try {
-      let backendUrl = process.env.BACKEND || "http://localhost:5001";
+      let backendUrl = import.meta.env.VITE_BACKEND_URL;
       const res = await axios.post(backendUrl+"/api/v1/auth/signup", formData);
       console.log("Signup success:", res.data);
       toast.success("Registered successfully!");
