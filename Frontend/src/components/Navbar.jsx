@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../features/auth/authSlice";
 import { Link, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { FaExclamationTriangle, FaSun, FaMoon } from "react-icons/fa";
 import Button from "./Button";
 
@@ -10,6 +11,7 @@ const AppNavbar = () => {
   const { token, user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [theme, setTheme] = useState(() => {
     try {
@@ -21,13 +23,20 @@ const AppNavbar = () => {
 
   useEffect(() => {
     try {
-      if (theme === 'light') document.documentElement.classList.add('light');
-      else document.documentElement.classList.remove('light');
+      // Persist theme selection
       localStorage.setItem('theme', theme);
+
+      // If on landing page, keep landing theme-agnostic (no 'light' class)
+      if (location?.pathname === "/") {
+        document.documentElement.classList.remove('light');
+      } else {
+        if (theme === 'light') document.documentElement.classList.add('light');
+        else document.documentElement.classList.remove('light');
+      }
     } catch (e) {
       // ignore
     }
-  }, [theme]);
+  }, [theme, location?.pathname]);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -55,14 +64,16 @@ const AppNavbar = () => {
 <p className="text-sm text-gray-500 italic">Your voice, our action</p> 
           {/* Desktop Menu */}
           <div className="hidden lg:flex items-center gap-4">
-            {/* Theme Toggle */}
-            <Button
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="px-2 py-2 text-sm rounded-md border border-[#30363d] text-[#c9d1d9] bg-transparent hover:bg-[#21262d] transition-colors"
-              aria-label="Toggle theme"
-            >
-              {theme === 'dark' ? <FaSun /> : <FaMoon />}
-            </Button>
+            {/* Theme Toggle (hide on landing) */}
+            {location?.pathname !== "/" && (
+              <Button
+                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                className="px-2 py-2 text-sm rounded-md border border-[#30363d] text-[#c9d1d9] bg-transparent hover:bg-[#21262d] transition-colors"
+                aria-label="Toggle theme"
+              >
+                {theme === 'dark' ? <FaSun /> : <FaMoon />}
+              </Button>
+            )}
 
             {token ? (
               <>
@@ -85,7 +96,7 @@ const AppNavbar = () => {
                 <div className="flex items-center gap-2">
                   <Button
                     onClick={handleLogout}
-                    className="px-4 py-2 text-sm font-medium rounded-md border border-[#30363d] text-[#c9d1d9] bg-transparent hover:bg-[#21262d] hover:text-[#f0f6fc] transition-colors"
+                    className="cursor-pointer px-4 py-2 text-sm font-medium rounded-md border border-[#30363d] text-[#c9d1d9] bg-transparent hover:bg-[#21262d] hover:text-[#f0f6fc] transition-colors"
                   >
                     Logout
                   </Button>
@@ -152,7 +163,7 @@ const AppNavbar = () => {
                           handleLogout();
                           setIsMenuOpen(false);
                         }}
-                        className="text-left px-2 py-2 font-medium rounded-md border border-[#30363d] text-[#c9d1d9] bg-transparent hover:bg-[#21262d]"
+                        className="cursor-pointer text-left px-2 py-2 font-medium rounded-md border border-[#30363d] text-[#c9d1d9] bg-transparent hover:bg-[#21262d]"
                       >
                         Logout
                       </Button>
@@ -178,18 +189,20 @@ const AppNavbar = () => {
               )}
             </div>
               {/* Mobile theme toggle (always visible) */}
-              <div>
-                <Button
-                  onClick={() => {
-                    setTheme(theme === 'dark' ? 'light' : 'dark');
-                    setIsMenuOpen(false);
-                  }}
-                  className="px-2 py-2 text-sm rounded-md border border-[#30363d] text-[#c9d1d9] bg-transparent hover:bg-[#21262d] transition-colors"
-                  aria-label="Toggle theme"
-                >
-                  {theme === 'dark' ? <FaSun /> : <FaMoon />}
-                </Button>
-              </div>
+              {location?.pathname !== "/" && (
+                <div>
+                  <Button
+                    onClick={() => {
+                      setTheme(theme === 'dark' ? 'light' : 'dark');
+                      setIsMenuOpen(false);
+                    }}
+                    className="px-2 py-2 text-sm rounded-md border border-[#30363d] text-[#c9d1d9] bg-transparent hover:bg-[#21262d] transition-colors"
+                    aria-label="Toggle theme"
+                  >
+                    {theme === 'dark' ? <FaSun /> : <FaMoon />}
+                  </Button>
+                </div>
+              )}
           </div>
         )}
       </div>
