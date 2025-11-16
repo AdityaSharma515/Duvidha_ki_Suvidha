@@ -7,7 +7,15 @@ import { connectDB } from "./src/config/db.js";
 import authRoutes from "./src/routes/authroutes.js";
 import complaintRoutes from "./src/routes/Complaintroutes.js";
 const app = express()
-app.use(cors());
+app.use(
+    cors({
+        origin: "*",
+        methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+        allowedHeaders: ["Content-Type", "Authorization"]
+    })
+);
+
+app.options("*", cors());
 app.use(express.json())
 connectDB();
 app.use("/api/v1/auth", authRoutes);
