@@ -11,6 +11,7 @@ import {
   FaArrowRight,
   FaCheck
 } from "react-icons/fa";
+import ScrollToBottom from "../components/ScrollToBottom";
 
 const Landing = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -204,6 +205,8 @@ const Landing = () => {
           </div>
         </div>
       </section>
+
+      <ScrollToBottom />
 
       <style>{`
         .landing-page {

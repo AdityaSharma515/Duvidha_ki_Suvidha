@@ -6,6 +6,7 @@ import ComplaintCard from "../components/ComplaintCard";
 import Loader from "../components/Loader";
 import { FaInbox, FaGlobe } from "react-icons/fa";
 import Button from "../components/Button";
+import ScrollToBottom from "../components/ScrollToBottom";
 import NoComplaintAnimation from "../components/NoComplaintAnimation";
 
 const Dashboard = () => {
@@ -182,6 +183,7 @@ const Dashboard = () => {
           ))
         )}
       </div>
+      <ScrollToBottom />
     </div>
   );
 };

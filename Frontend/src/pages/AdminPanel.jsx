@@ -6,6 +6,7 @@ import API from "../api/axios.js";
 import Loader from "../components/Loader";
 import Button from "../components/Button";
 import { FaCog, FaEye } from "react-icons/fa";
+import ScrollToBottom from "../components/ScrollToBottom";
 
 const AdminPanel = () => {
   const dispatch = useDispatch();
@@ -481,6 +482,7 @@ const AdminPanel = () => {
           </div>
         </div>
       )}
+      <ScrollToBottom />
     </div>
   );
 };
