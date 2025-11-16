@@ -21,7 +21,7 @@ function decodeJwt(token) {
   }
 }
 
-const API_URL = import.meta.env.VITE_BACKEND_URL+"/api/v1/auth";
+const API_URL = import.meta.env.VITE_BACKEND_URL+"api/v1/auth";
 
 // 🔹 Signup user
 export const signupUser = createAsyncThunk(
