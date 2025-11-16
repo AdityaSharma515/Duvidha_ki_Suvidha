@@ -7,6 +7,10 @@ import "./index.css";
 // Initialize theme early so it applies before React mounts.
 // Reads the saved preference from localStorage and sets/removes
 // the `light` class on the documentElement (html).
+
+
+// deployment test
+
 try {
   const savedTheme = localStorage.getItem('theme');
   if (savedTheme === 'light') document.documentElement.classList.add('light');
