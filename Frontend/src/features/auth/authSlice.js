@@ -21,7 +21,7 @@ function decodeJwt(token) {
   }
 }
 
-const API_URL = "http://localhost:5001/api/v1/auth";
+const API_URL = process.env.BACKEND+"/api/v1/auth" || "http://localhost:5001/api/v1/auth";
 
 // 🔹 Signup user
 export const signupUser = createAsyncThunk(

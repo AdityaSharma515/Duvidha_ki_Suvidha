@@ -55,23 +55,23 @@ const ComplaintCard = ({ complaint, isAdmin = false }) => {
   };
 
   const isNew = () => {
-  if (!complaint.createdAt) return false;
-  const createdTime = new Date(complaint.createdAt).getTime();
-  return (Date.now() - createdTime) < 6 * 60 * 60 * 1000; // last 6 hours
-};
+    if (!complaint.createdAt) return false;
+    const createdTime = new Date(complaint.createdAt).getTime();
+    return (Date.now() - createdTime) < 6 * 60 * 60 * 1000; // last 6 hours
+  };
 
   return (
-  <div
-  className={`border-l-4 rounded-lg overflow-hidden transition-all duration-300
+    <div
+      className={`border-l-4 rounded-lg overflow-hidden transition-all duration-300
               ${complaint.status === "Resolved"
-                ? "border-l-green-500"
-                : complaint.status === "Pending"
-                  ? "border-l-yellow-500"
-                  : "border-l-red-500"}
+          ? "border-l-green-500"
+          : complaint.status === "Pending"
+            ? "border-l-yellow-500"
+            : "border-l-red-500"}
               bg-[#161b22] border border-[#30363d]
               hover:shadow-[0_0_20px_rgba(88,166,255,0.6)]
               hover:scale-[1.02]`}
->
+    >
 
 
 
@@ -87,18 +87,18 @@ const ComplaintCard = ({ complaint, isAdmin = false }) => {
       )}
 
       <div className="p-4">
-       <div className="flex items-center gap-2">
-  <h3 className="text-lg font-semibold mb-2 text-[#58a6ff]">
+<div className="flex items-center gap-2">
+  <h3 className="text-lg font-semibold text-[#58a6ff]">
     {complaint.title || "No Title"}
   </h3>
-
   {isNew() && (
     <span className="relative flex h-3 w-3">
       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
-      <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+      <span className="relative inline-flex h-3 w-3 rounded-full bg-green-500"></span>
     </span>
   )}
 </div>
+
 
 
         <p className="text-[#8b949e] mb-4 text-sm">
@@ -135,31 +135,29 @@ const ComplaintCard = ({ complaint, isAdmin = false }) => {
               {complaint.status || "Unknown"}
             </span>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <Button
                 title="Upvote this complaint"
                 onClick={handleUpvote}
-                className={`flex items-center gap-1 px-3 py-1.5 rounded-full transition-all duration-200 cursor-pointer ${
-                  complaint.hasUpvoted
-                    ? 'text-white bg-green-600/30 hover:bg-green-600/50 shadow-lg shadow-green-500/20'
-                    : 'text-[#8b949e] bg-transparent hover:bg-green-600/20 hover:text-green-400 hover:shadow-md hover:shadow-green-500/10'
-                }`}
+                className={`flex items-center gap-1 text-sm transition-colors cursor-pointer ${complaint.hasUpvoted
+                    ? 'text-green-500'
+                    : 'text-[#8b949e] hover:text-green-500'
+                  }`}
               >
                 <FaLongArrowAltUp size={14} />
-                <span className="text-xs font-medium">{complaint.upvoteCount || 0}</span>
+                <span>{complaint.upvoteCount || 0}</span>
               </Button>
 
               <Button
                 title="Downvote this complaint"
                 onClick={handleDownvote}
-                className={`flex items-center gap-1 px-3 py-1.5 rounded-full transition-all duration-200 cursor-pointer ${
-                  complaint.hasDownvoted
-                    ? 'text-white bg-red-600/30 hover:bg-red-600/50 shadow-lg shadow-red-500/20'
-                    : 'text-[#8b949e] bg-transparent hover:bg-red-600/20 hover:text-red-400 hover:shadow-md hover:shadow-red-500/10'
-                }`}
+                className={`flex items-center gap-1 text-sm transition-colors cursor-pointer ${complaint.hasDownvoted
+                    ? 'text-red-500'
+                    : 'text-[#8b949e] hover:text-red-500'
+                  }`}
               >
                 <FaLongArrowAltDown size={14} />
-                <span className="text-xs font-medium">{complaint.downvoteCount || 0}</span>
+                <span>{complaint.downvoteCount || 0}</span>
               </Button>
 
             </div>

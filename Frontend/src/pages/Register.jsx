@@ -30,7 +30,8 @@ const Register = () => {
     }
 
     try {
-      const res = await axios.post("http://localhost:5001/api/v1/auth/signup", formData);
+      let backendUrl = process.env.BACKEND || "http://localhost:5001";
+      const res = await axios.post(backendUrl+"/api/v1/auth/signup", formData);
       console.log("Signup success:", res.data);
       toast.success("Registered successfully!");
       navigate("/dashboard");
