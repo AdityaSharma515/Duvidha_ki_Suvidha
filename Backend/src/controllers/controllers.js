@@ -34,8 +34,10 @@ export async function signup(req, res) {
     const result = schema.safeParse({ username, email, password, role, roomNumber });
 
     if (!result.success) {
+      // Send the detailed validation messages so frontend can show which rules failed
+      const messages = result.error.issues.map((issue) => issue.message).join(", ");
       return res.status(400).json({
-        message: "Input correct password format",
+        message: messages || "Invalid input",
         errors: result.error.issues,
       });
     }

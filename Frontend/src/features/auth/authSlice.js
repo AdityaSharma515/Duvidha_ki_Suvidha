@@ -97,7 +97,8 @@ const authSlice = createSlice({
       })
       .addCase(signupUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        // Normalize error to a string so components can render it easily
+        state.error = (action.payload && (action.payload.message || action.payload)) || "Signup failed";
       })
 
       // 🔸 Signin
@@ -112,7 +113,8 @@ const authSlice = createSlice({
       })
       .addCase(signinUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        // Normalize error to a string so components can render it easily
+        state.error = (action.payload && (action.payload.message || action.payload)) || "Signin failed";
       });
   },
 });

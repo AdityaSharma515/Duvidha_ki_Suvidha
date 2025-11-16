@@ -35,8 +35,15 @@ const Register = () => {
       toast.success("Registered successfully!");
       navigate("/dashboard");
     } catch (error) {
-      console.error("Signup error:", error.response?.data || error.message);
-      toast.error(error.response?.data?.message || "Signup failed");
+        console.error("Signup error:", error.response?.data || error.message);
+        const data = error.response?.data;
+        // Prefer server message; if server sent an errors array (zod issues), join them
+        const message =
+          data?.message ||
+          (Array.isArray(data?.errors) ? data.errors.map((e) => e.message).join(", ") : null) ||
+          error.message ||
+          "Signup failed";
+        toast.error(message);
     }
   };
 
