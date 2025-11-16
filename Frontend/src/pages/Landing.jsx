@@ -73,7 +73,7 @@ const Landing = () => {
                 Streamline your hostel complaint management. Students can raise complaints seamlessly,
                 and authorities can resolve them efficiently.
               </p>
-              <div className="hero-buttons mt-8 flex flex-wrap gap-4">
+              <div className="hero-buttons mt-8 flex flex-wrap gap-4 items-center">
                 {!token ? (
                   <>
                     <Link to="/signup" className="hero-btn-primary">
@@ -608,6 +608,42 @@ const Landing = () => {
           background: #2ea043;
           border-color: #2ea043;
           transform: translateY(-1px);
+        }
+
+        /* Hover / transition enhancements for cards and items */
+        .feature-card,
+        .benefit-item,
+        .stats-card,
+        .hero-card,
+        .cta-card {
+          transition: transform 220ms ease, box-shadow 220ms ease, background-color 220ms ease, border-color 220ms ease;
+        }
+
+        .feature-card:hover {
+          transform: translateY(-8px) scale(1.01);
+          box-shadow: 0 20px 40px rgba(2,6,23,0.45);
+        }
+
+        .benefit-item:hover {
+          transform: translateX(6px);
+          background: rgba(88,166,255,0.03);
+          border-radius: 8px;
+          padding-left: 1.25rem;
+        }
+
+        .stats-card:hover {
+          transform: translateY(-6px);
+          box-shadow: 0 18px 36px rgba(2,6,23,0.35);
+        }
+
+        .hero-card:hover {
+          transform: translateY(-6px) scale(1.005);
+          box-shadow: 0 30px 60px rgba(2,6,23,0.45);
+        }
+
+        .cta-card:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 18px 36px rgba(2,6,23,0.25);
         }
 
         /* Animations */

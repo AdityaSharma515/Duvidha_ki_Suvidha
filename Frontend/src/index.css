@@ -39,10 +39,10 @@ body {
   background-color: #ffffff;
   color: #24292f;
 }
-.light [class*="bg-[#161b22]"] { background-color: #ffffff !important; }
-.light [class*="bg-[#21262d]"] { background-color: #f6f8fa !important; }
-.light [class*="bg-[#0d1117]"] { background-color: #ffffff !important; }
-.light [class*="border-[#30363d]"] { border-color: #d0d7de !important; }
+.light [class*="bg-[#161b22]"] { background-color: #fcf1e477 !important; }
+.light [class*="bg-[#21262d]"] { background-color: #ecececc4 !important; }
+.light [class*="bg-[#0d1117]"] { background-color: #fafafa !important; }
+.light [class*="border-[#30363d]"] { border-color: #c2bdbd !important; }
 .light [class*="text-[#f0f6fc]"] { color: #0b1220 !important; }
 .light [class*="text-[#c9d1d9]"] { color: #24292f !important; }
 .light [class*="text-[#8b949e]"] { color: #57606a !important; }
