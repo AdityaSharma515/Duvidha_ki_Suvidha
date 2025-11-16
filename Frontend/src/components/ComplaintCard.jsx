@@ -135,31 +135,31 @@ const ComplaintCard = ({ complaint, isAdmin = false }) => {
               {complaint.status || "Unknown"}
             </span>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <Button
                 title="Upvote this complaint"
                 onClick={handleUpvote}
-                className={`flex items-center gap-1 text-sm transition-colors cursor-pointer ${
+                className={`flex items-center gap-1 px-3 py-1.5 rounded-full transition-all duration-200 cursor-pointer ${
                   complaint.hasUpvoted
-                    ? 'text-green-500'
-                    : 'text-[#8b949e] hover:text-green-500'
+                    ? 'text-white bg-green-600/30 hover:bg-green-600/50 shadow-lg shadow-green-500/20'
+                    : 'text-[#8b949e] bg-transparent hover:bg-green-600/20 hover:text-green-400 hover:shadow-md hover:shadow-green-500/10'
                 }`}
               >
                 <FaLongArrowAltUp size={14} />
-                <span>{complaint.upvoteCount || 0}</span>
+                <span className="text-xs font-medium">{complaint.upvoteCount || 0}</span>
               </Button>
 
               <Button
                 title="Downvote this complaint"
                 onClick={handleDownvote}
-                className={`flex items-center gap-1 text-sm transition-colors cursor-pointer ${
+                className={`flex items-center gap-1 px-3 py-1.5 rounded-full transition-all duration-200 cursor-pointer ${
                   complaint.hasDownvoted
-                    ? 'text-red-500'
-                    : 'text-[#8b949e] hover:text-red-500'
+                    ? 'text-white bg-red-600/30 hover:bg-red-600/50 shadow-lg shadow-red-500/20'
+                    : 'text-[#8b949e] bg-transparent hover:bg-red-600/20 hover:text-red-400 hover:shadow-md hover:shadow-red-500/10'
                 }`}
               >
                 <FaLongArrowAltDown size={14} />
-                <span>{complaint.downvoteCount || 0}</span>
+                <span className="text-xs font-medium">{complaint.downvoteCount || 0}</span>
               </Button>
 
             </div>
